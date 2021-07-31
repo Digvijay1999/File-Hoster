@@ -1,0 +1,59 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Admin | manage user</title>
+</head>
+
+<body>
+
+    <table>
+
+        <tr>
+            <th>user id</th>
+            <th>username</th>
+            <th>user email</th>
+            <th>status</th>
+            <th>profile</th>
+            <th>action</th>
+        </tr>
+
+
+        <% AllUsers.forEach( document=>{ %>
+
+            <tr>
+                <th>
+                    <%= document.user_id %>
+                </th>
+                <th>
+                    <%= document.username %>
+                </th>
+                <th>
+                    <%= document.email %>
+                </th>
+                <th>
+                    <%= document.access %>
+                </th>
+                <th>
+                    <form action="/admin/updateuser" method="POST">
+                        <input style="display: none;" type="text" name="username" value=<%= document.username %> >
+                        <input type="submit" value="update">
+                    </form>
+                </th>
+                <th>
+                    <form action="/admin/deleteuser" method="POST">
+                        <input style="display: none;" type="text" name="username" value=<%= document.username %>>
+                        <input type="submit" value="delete">
+                    </form>
+                </th>
+            </tr>
+            <% }) %>
+
+    </table>
+
+</body>
+
+</html>

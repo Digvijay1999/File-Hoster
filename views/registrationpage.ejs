@@ -1,0 +1,63 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>new user</title>
+    <link rel="stylesheet" href="/css/registerpage.css">
+
+</head>
+
+<body style="text-align: center; background-color: gray;">
+
+    <div style="font-family:sans-serif; margin-bottom: 2cm; background-color: brown; padding: 5px;">
+        <h1>personal information</h1>
+    </div>
+
+    <div">
+
+        <form action="/homepage/register" method="POST">
+            <div class="inputs">
+                Name <input type="text" name="name">
+            </div>
+
+            <div class="inputs">
+                username <input type="text" name="username">
+            </div>
+
+            <div class="inputs">
+                Password <input type="text" name="userpassword">
+            </div>
+
+            <div class="inputs">
+                Email <input type="email" name="useremail">
+            </div>
+
+            <div class="inputs">
+                select gender <select name="usergender" id="gender">
+                    <option value="male">male</option>
+                    <option value="female">female</option>
+                </select>
+            </div>
+
+            <div class="inputs">
+                Age <input type="number" name="userage">
+            </div>
+
+            <div class="inputs">
+
+                address <textarea name="useraddress" cols="30" rows="5" style="resize: none;"></textarea>
+
+            </div>
+
+
+            <div><input type="submit"></div>
+
+        </form>
+        </div>
+
+</body>
+
+</html>
