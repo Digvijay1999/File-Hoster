@@ -6,12 +6,19 @@ const deleteuser = require('../controllers/Admin/deleteuser');
 const getuseractions = require('../controllers/Admin/getAllUserActivities');
 const getalluserusage = require('../controllers/Admin/getalluserusage');
 const gettotalspaceusedbyuser = require('../controllers/Admin/gettotalspaceusedbyuser');
+const userupdate = require('../controllers/Admin/updateuser');
 const DB = require('../db-config');
 const path = require('path');
 
 //admin router here i.e. manage user, usage,activities and all
 
 router
+    .get('/', (req, res) => {
+
+        let dir = path.join(`${__dirname}`, `../views/admin/adminHomePage.ejs`)
+        res.render(dir)
+
+    })
     .get('/manageuser', async (req, res) => {
 
         let dir = path.join(`${__dirname}`, `../views/admin/manageuser.ejs`)
@@ -21,14 +28,27 @@ router
 
     }).post('/updateuser', async (req, res) => {
 
+        console.log(req.body);
+
+        if (req.body.active == 'active') {
+
+            console.log('user is active');
+            await userupdate.deactivateUser(req.body.user_id);
+            res.redirect('/admin/manageuser')
+
+        } else if (req.body.inactive == 'inactive') {
+
+            console.log();
+            await userupdate.activateUser(req.body.user_id)
+            res.redirect('/admin/manageuser')
+
+        }
         //update user page
-        let username = req.body.username
-        res.end('user updated')
 
     }).post('/deleteuser', async (req, res) => {
 
         let username = req.body.username
-        
+
         deleteuser.deleteuser(username)
         res.end('/admin/manageuser')
         //delete user and redirect to admin page
@@ -62,22 +82,15 @@ router
                     await DB.executeQuery(newallowedspace)
 
                     res.redirect('/admin/userStorage')
-
                 }
-
-
-
             })
-
         } else if (req.body.action == 'stop') {
-           let spaceUsed = await  gettotalspaceusedbyuser.totalusedspace(req.body.user_id)
-           console.log(spaceUsed);
+            let spaceUsed = await gettotalspaceusedbyuser.totalusedspace(req.body.user_id)
+            console.log(spaceUsed);
             let newallowedspace = `UPDATE user_storagespace SET space = '${spaceUsed}' WHERE user_id = '${req.body.user_id}' `
             await DB.executeQuery(newallowedspace)
             res.redirect('/admin/userStorage')
-
         }
-
     })
 
 module.exports = router;

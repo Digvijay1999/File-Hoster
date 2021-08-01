@@ -34,18 +34,26 @@
                 <th>
                     <%= document.email %>
                 </th>
+
                 <th>
-                    <%= document.access %>
+                    <form action="/admin/updateuser" method="POST">
+                        <input style="display: none;" type="text" name="user_id" value=<%=document.user_id %> >
+                        <%if(document.access){%>
+                            <input style='background-color: green;' ;" type="submit" name="active" value="active">
+                            <%} else { %>
+                                <input style='background-color: red;' ;" type="submit" name="inactive" value="inactive">
+                                <% } %>
+                    </form>
                 </th>
                 <th>
                     <form action="/admin/updateuser" method="POST">
-                        <input style="display: none;" type="text" name="username" value=<%= document.username %> >
-                        <input type="submit" value="update">
+                        <input style="display: none;" type="text" name="user_id" value=<%=document.user_id %> >
+                        <input type="submit" name="update" value="update">
                     </form>
                 </th>
                 <th>
                     <form action="/admin/deleteuser" method="POST">
-                        <input style="display: none;" type="text" name="username" value=<%= document.username %>>
+                        <input style="display: none;" type="text" name="username" value=<%=document.username %>>
                         <input type="submit" value="delete">
                     </form>
                 </th>
