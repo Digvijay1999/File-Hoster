@@ -13,8 +13,6 @@ const insertActionsToDB = require('../controllers/insertActionsToDB');
 const currentallowedspace = require('../controllers/Admin/getCurrentAllowedSpace');
 const totalspaceusedbyuser = require('../controllers/Admin/gettotalspaceusedbyuser')
 
-
-
 app.use(express.static('public'))
 
 router
@@ -27,51 +25,54 @@ router
         let fileSizeInMB = file.size / 1000000
         let user_id = await userid.userid(req.cookies.user)
         let totalspaceused = Number(await totalspaceusedbyuser.totalusedspace(user_id))
-        console.log('total space used '+ totalspaceused);
         let allowedSpace = Number(await currentallowedspace.getAllowedSpace(user_id))
-        console.log('allowed space '+ allowedSpace);
         let spaceLeft = allowedSpace - totalspaceused;
-        console.log('space left ' + spaceLeft);
 
         if (totalspaceused < allowedSpace) {
 
-            if (req.files) {
-                var filename = file.name
+            if (fileSizeInMB < spaceLeft) {
 
-                let user = req.cookies.user;
+                if (req.files) {
 
-                var dir = `./public/user-files/${user}`;
-                console.log(dir);
+                    var filename = file.name
 
-                try {
-                    if (!fs.existsSync(dir)) {
-                        fs.mkdirSync(dir)
+                    let user = req.cookies.user;
+
+                    var dir = `./public/user-files/${user}`;
+                    console.log(dir);
+
+                    try {
+                        if (!fs.existsSync(dir)) {
+                            fs.mkdirSync(dir)
+                        }
+                    } catch (err) {
+                        console.error(err)
                     }
-                } catch (err) {
-                    console.error(err)
-                }
 
-                filedir = `./public/user-files/${user}/${filename}`
-                await file.mv(filedir, (error) => {
-                    if (error) {
-                        res.end('file could not be created please try again')
-                    }
-                })
+                    filedir = `./public/user-files/${user}/${filename}`
+                    await file.mv(filedir, (error) => {
+                        if (error) {
+                            res.end('file could not be created please try again')
+                        }
+                    })
 
+                    fileHandle.fileEntry(user, filedir, fileSizeInMB)
 
-                fileHandle.fileEntry(user, filedir, fileSizeInMB)
+                    res.render('MainUserInterface', { layout: './layouts/MainUserInterface' })
 
+                    insertIntoAction.insertIntoAction(user, new Date().toISOString(), 'upload', filename)
 
-                res.render('MainUserInterface', { layout: './layouts/MainUserInterface' })
+                } else {res.end('file could not be uploaded')}
 
-                insertIntoAction.insertIntoAction(user, new Date().toISOString(), 'upload', filename)
+            } else if (fileSizeInMB > spaceLeft) {
+
+                res.end('sorry no space')
 
             }
 
-        } else if (fileSizeInMB > spaceLeft ) {
+        } else {
             res.end('sorry no space')
         }
-
 
     }).get('/myfiles', async (req, res) => {
         let filesArray = []
