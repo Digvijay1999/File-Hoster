@@ -1,2 +1,0 @@
-after sign up store cookie and redirect to home page
-check file handler for upload router post

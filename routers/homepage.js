@@ -18,6 +18,8 @@ router
     .post('/register', (req, res) => {
         //create new user and gets the user id for session creation
         let user_id = createuser.createUser(req.body)
+        res.cookie('user', `${req.body.username}`)
+        res.render('MainUserInterface', { layout: './layouts/MainUserInterface' })
         console.log('user created');
 
     })
@@ -26,8 +28,6 @@ router
         //login here, create session , sent to next page
         let loginquery = `SELECT username, userpassword,access FROM user_credentials WHERE username = '${req.body.username}' `
         let login_credential = await DB.executeQuery(loginquery)
-
-        console.log(login_credential);
         //[ { username: 'admin', userpassword: 'Digu@1234' } ]
 
         if (login_credential.length == 0) {

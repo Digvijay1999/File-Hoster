@@ -8,7 +8,6 @@ async function createUser(payload) {
     let getuserid = `SELECT user_id FROM user_credentials WHERE username = '${payload.username}'`;
     let result = await DB.executeQuery(getuserid);
     user_id = result[0].user_id;
-    console.log(user_id);
     let temprole = 0;
 
     let insertUserInfo = `INSERT INTO user_information (user_id,name,address,email,age,gender,role) 

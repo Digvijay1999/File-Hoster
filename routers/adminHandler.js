@@ -28,6 +28,7 @@ router
     }).post('/deleteuser', async (req, res) => {
 
         let username = req.body.username
+        
         deleteuser.deleteuser(username)
         res.end('/admin/manageuser')
         //delete user and redirect to admin page

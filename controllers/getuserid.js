@@ -11,4 +11,3 @@ async function userid(username) {
 module.exports = {
     userid : userid
 }
-

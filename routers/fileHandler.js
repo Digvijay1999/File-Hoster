@@ -23,14 +23,19 @@ router
     })
     .post('/upload', async (req, res) => {
 
+        var file = req.files.file
+        let fileSizeInMB = file.size / 1000000
         let user_id = await userid.userid(req.cookies.user)
         let totalspaceused = Number(await totalspaceusedbyuser.totalusedspace(user_id))
+        console.log('total space used '+ totalspaceused);
         let allowedSpace = Number(await currentallowedspace.getAllowedSpace(user_id))
+        console.log('allowed space '+ allowedSpace);
+        let spaceLeft = allowedSpace - totalspaceused;
+        console.log('space left ' + spaceLeft);
 
         if (totalspaceused < allowedSpace) {
 
             if (req.files) {
-                var file = req.files.file
                 var filename = file.name
 
                 let user = req.cookies.user;
@@ -53,7 +58,6 @@ router
                     }
                 })
 
-                let fileSizeInMB = file.size / 1000000
 
                 fileHandle.fileEntry(user, filedir, fileSizeInMB)
 
@@ -64,7 +68,7 @@ router
 
             }
 
-        } else {
+        } else if (fileSizeInMB > spaceLeft ) {
             res.end('sorry no space')
         }
 
@@ -104,8 +108,6 @@ router
 
         } else if (req.body.action == 'delete') {
             let deleteFilePath = `./public/user-files/${req.cookies.user}/${req.body.file}`
-            console.log(deleteFilePath);
-            console.log(req.cookies.user);
 
             await fileHandle.filedelete(req.cookies.user, deleteFilePath)
             fs.unlinkSync(filepath);
