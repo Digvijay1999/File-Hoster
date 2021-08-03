@@ -2,6 +2,8 @@ const express = require('express');
 const app = express();
 const router = express.Router();
 const createuser = require('../controllers/createuser');
+const loginCredentials = require('../validator/userLogin');
+const userSignUp = require('../validator/userForm');
 const DB = require('../db-config');
 app.use(express.static('public'))
 
@@ -15,7 +17,14 @@ router
         //redirect to register user form
         res.render("registrationpage")
     })
-    .post('/register', (req, res) => {
+    .post('/register', async (req, res) => {
+       let result =  await userSignUp.userRegisterValidation(req.body)
+
+       if (result.error) {
+           res.end(result.error.message)
+           console.log(result);
+           return
+       }
         //create new user and gets the user id for session creation
         let user_id = createuser.createUser(req.body)
         res.cookie('user', `${req.body.username}`)
@@ -24,6 +33,13 @@ router
 
     })
     .post('/login', async (req, res) => {
+
+        let result = await loginCredentials.validateLoginDetails(req.body)
+
+        if (result.error) {
+            res.end(result.error.message)
+            return
+        }
 
         //login here, create session , sent to next page
         let loginquery = `SELECT username, userpassword,access FROM user_credentials WHERE username = '${req.body.username}' `

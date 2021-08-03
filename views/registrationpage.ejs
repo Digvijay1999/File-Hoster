@@ -20,30 +20,30 @@
 
         <form action="/homepage/register" method="POST">
             <div class="inputs">
-                Name <input type="text" name="name">
+                Name <input type="text" name="name" required>
             </div>
 
             <div class="inputs">
-                username <input type="text" name="username">
+                username <input type="text" name="username" required>
             </div>
 
             <div class="inputs">
-                Password <input type="text" name="userpassword">
+                Password <input type="text" name="userpassword" required>
             </div>
 
             <div class="inputs">
-                Email <input type="email" name="useremail">
+                Email <input type="email" name="useremail" required>
             </div>
 
             <div class="inputs">
-                select gender <select name="usergender" id="gender">
-                    <option value="male">male</option>
+                select gender <select name="usergender" id="gender" >
+                    <option value="male" selected >male</option>
                     <option value="female">female</option>
                 </select>
             </div>
 
             <div class="inputs">
-                Age <input type="number" name="userage">
+                Age <input type="number" name="userage" >
             </div>
 
             <div class="inputs">

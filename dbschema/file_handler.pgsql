@@ -1,14 +1,15 @@
-CREATE TABLE user_credentials (  
-    user_id SERIAL PRIMARY KEY,
-    username varchar(20) UNIQUE ,
-    userpassword varchar(10)
+CREATE TABLE IF NOT EXISTS user_credentials (  
+    user_id SERIAL PRIMARY KEY NOT NULL,
+    username varchar(20) UNIQUE NOT NULL,
+    userpassword varchar(10) NOT NULL,
+    access BOOLEAN NOT NULL
 )
 
-CREATE TABLE user_information (  
-    user_id integer,
+CREATE TABLE IF NOT EXISTS user_information (  
+    user_id integer NOT NULL,
     name varchar(30),
     address text,
-    email varchar(50) UNIQUE,
+    email varchar(128) UNIQUE,
     age smallint,
     gender varchar(6),
     role smallint,
@@ -16,21 +17,23 @@ CREATE TABLE user_information (
 )
 
 CREATE TABLE IF NOT EXISTS user_files (
-    user_id integer,
-    username varchar(20) UNIQUE ,
-    directory text,
-    filesize integer
+    user_id integer  NOT NULL ,
+    username varchar(20) UNIQUE  NOT NULL ,
+    directory text NOT NULL ,
+    filesize integer NOT NULL ,
+    filename TEXT NOT NULL 
 )
 
-INSERT INTO user_credentials (username,userpassword) 
-        VALUES ('${payload.username}','${payload.userpassword}');
-
-//incomplete action table
 CREATE TABLE IF NOT EXISTS userfiles_actions (
-    user_id integer UNIQUE,
-    username varchar(20) UNIQUE ,
+    username VARCHAR UNIQUE NOT NULL,
     time VARCHAR(50),
-    action VARCHAR(20)
+    action VARCHAR(20),
+    file_name TEXT NOT NULL
+)
+
+CREATE TABLE IF NOT EXISTS user_storagespace (
+    user_id INTEGER UNIQUE NOT NULL,
+    space NUMERIC NOT NULL
 )
 
 //join tables
