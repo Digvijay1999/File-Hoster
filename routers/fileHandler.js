@@ -56,7 +56,7 @@ router
                         }
                     })
 
-                    fileHandle.fileEntry(user, filedir, fileSizeInMB)
+                    fileHandle.fileEntry(user, filedir, fileSizeInMB,filename)
 
                     res.render('MainUserInterface', { layout: './layouts/MainUserInterface' })
 

@@ -4,7 +4,6 @@ const curretAllowedSpace = require('./getCurrentAllowedSpace')
 
 let data = usage()
 data.then((data) => {
-    console.log(data);
 })
 
 async function usage() {

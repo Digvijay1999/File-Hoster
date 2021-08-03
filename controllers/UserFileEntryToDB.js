@@ -1,11 +1,11 @@
 const DB = require('../db-config')
 const userid = require('./getuserid')
 
-async function fileEntry(user, directory, filesize) {
+async function fileEntry(user, directory, filesize,filename) {
 
     let user_id = await userid.userid(user)
-    let insertFile = `INSERT INTO user_files (user_id,username,directory,filesize)
-    VALUES('${user_id}','${user}','${directory}','${filesize}')`
+    let insertFile = `INSERT INTO user_files (user_id,username,directory,filesize,filename)
+    VALUES('${user_id}','${user}','${directory}','${filesize}','${filename}')`
     await DB.executeQuery(insertFile)
 }
 
@@ -21,12 +21,9 @@ async function filedelete(user, directory) {
 
 async function getFileSize(user, path) {
 
-    console.log(path);
     let query = `SELECT filesize FROM user_files WHERE username = '${user}' AND directory = '${path}'`
     let result = await DB.executeQuery(query);
-    console.log(result);
     let filesize = result[0].filesize
-    console.log(filesize);
     return filesize;
 }
 

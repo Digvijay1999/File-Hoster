@@ -9,6 +9,7 @@ const layouts = require('express-ejs-layouts')
 const cookieparser = require('cookie-parser')
 const upload = require('express-fileupload')
 const DB = require('./db-config');
+const path = require('path');
 app.use(upload());
 app.use(cookieparser());
 app.use(express.urlencoded({ extended: false }));
@@ -30,6 +31,7 @@ app.use('/homepage',homepage);
 app.use('/file',fileHandler);
 
 app.use('/admin',admin);
+
 
 
 

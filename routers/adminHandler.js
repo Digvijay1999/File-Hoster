@@ -7,8 +7,12 @@ const getuseractions = require('../controllers/Admin/getAllUserActivities');
 const getalluserusage = require('../controllers/Admin/getalluserusage');
 const gettotalspaceusedbyuser = require('../controllers/Admin/gettotalspaceusedbyuser');
 const userupdate = require('../controllers/Admin/updateuser');
+const fileHandle = require('../controllers/UserFileEntryToDB')
 const DB = require('../db-config');
+const fs = require('fs');
+
 const path = require('path');
+const usersandfiles = require('../controllers/Admin/getAllUsersFiles')
 
 //admin router here i.e. manage user, usage,activities and all
 
@@ -23,22 +27,18 @@ router
 
         let dir = path.join(`${__dirname}`, `../views/admin/manageuser.ejs`)
         let AllUsers = await manageuser.users()
-        console.log(AllUsers);
         res.render(dir, { AllUsers: AllUsers })
 
     }).post('/updateuser', async (req, res) => {
 
-        console.log(req.body);
 
         if (req.body.active == 'active') {
 
-            console.log('user is active');
             await userupdate.deactivateUser(req.body.user_id);
             res.redirect('/admin/manageuser')
 
         } else if (req.body.inactive == 'inactive') {
 
-            console.log();
             await userupdate.activateUser(req.body.user_id)
             res.redirect('/admin/manageuser')
 
@@ -91,6 +91,36 @@ router
             await DB.executeQuery(newallowedspace)
             res.redirect('/admin/userStorage')
         }
+    }).get('/userfiles', async (req, res) => {
+
+        let userfiles = await usersandfiles.usersandfiles();
+        console.log(userfiles);
+
+
+        let dir = path.join(`${__dirname}`, `../views/admin/userfiles.ejs`)
+        res.render(dir, { userfiles })
+
+    }).post('/userfiles', async (req, res) => {
+
+
+        const filepath = path.join(__dirname, `../public/user-files/${req.body.username}/${req.body.filename}`);
+
+    
+
+        if (req.body.action == 'download') {
+
+            res.download(filepath);
+
+        } else if (req.body.action == 'delete') {
+
+            let deletedir = `./public/user-files/${req.body.username}/${req.body.filename}`
+            await fileHandle.filedelete(req.body.username, deletedir)
+            fs.unlinkSync(filepath);
+            res.redirect('/admin/userfiles')
+
+        }
+
+
     })
 
 module.exports = router;
