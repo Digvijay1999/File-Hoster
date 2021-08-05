@@ -3,6 +3,10 @@ const userusedspace = require('./gettotalspaceusedbyuser')
 const userallowedspace = require('./getCurrentAllowedSpace')
 const userid = require('../getuserid')
 
+/**
+ *retuns the array of arrays for users 
+ * @return {Array} 
+ */
 async function usersandfiles() {
 
     let getAllUser = `SELECT username FROM user_credentials`;
@@ -22,8 +26,8 @@ async function usersandfiles() {
         fileNameAndSize.unshift({ username, allowedspace, usedspace })
 
         userandfiles.push(fileNameAndSize)
-
     }
+    console.log(userandfiles);
     return userandfiles
 }
 

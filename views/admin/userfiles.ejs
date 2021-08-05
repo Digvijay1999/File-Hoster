@@ -8,7 +8,19 @@
             background-color: #777;
             color: white;
             cursor: pointer;
-            padding: 18px;
+            padding: 10px;
+            width: 110%;
+            border: none;
+            text-align: left;
+            outline: none;
+            font-size: 18px;
+        }
+
+        #header {
+            background-color: black;
+            color: white;
+            cursor: pointer;
+            padding: 15px;
             width: 100%;
             border: none;
             text-align: left;
@@ -28,81 +40,95 @@
             background-color: #f1f1f1;
         }
     </style>
+    <title>Admin | userfiles </title>
 </head>
 
 <body>
 
-    <!-- [
-    [
-      { username: 'digu', allowedspace: '10', usedspace: '9.985367' },
-      { filename: null, filesize: '9.985367' }
-    ],
-    [
-      { username: 'raju', allowedspace: '10', usedspace: '4.885200' },
-      { filename: null, filesize: '0.516159' },
-      {
-        filename: 'IMG_20200930_105431379_HDR (2).jpg',
-        filesize: '1.261231'
-      },
-      { filename: 'IMG_20200930_105431379_HDR.jpg', filesize: '3.10781' }
-    ]
-  ] -->
+    <div id="header">
+        <span style="font-weight: bold; font-size: x-large;">
+             User
+        </span>
+        <span style="margin-left: 4cm; font-weight: bold; font-size:  x-large;">
+            Space Used
+        </span>
+        <span style="margin-left: 4cm; font-weight: bold; font-size:  x-large;">
+            Total Files
+        </span>
+    </div>
 
-    <% console.log(userfiles.length) %>
-
-        <% userfiles.forEach((info)=>{ %>
-
-            <button type="button" class="collapsible">
-                <form action="#" method="GET">
-                    <input type="submit" name='<%info[0].username %>' value='<%=info[0].username %>'>
-                </form>
-            </button>
-
-            <div class="content">
-                <% for(let index=1 ; index < info.length ; index++){ %>
-
-                            <div style="border-style: solid; border-color: black; border-width: thin;">
-                                <form action="/admin/userfiles" method="POST" style="margin: 10px;">
-                                    <div>
-                                        <h2>
-                                            <%= info[index].filename %>
-                                              
-                                        </h2>
-                                        <h2>
-                                            <%= info[index].filesize %>
-                                        </h2>
-                                    </div>
-                                    <div style="margin: 5px;">
-                                        <input type="text" name="username" value='<%=info[0].username %>'>
-                                        <input type="text" style="display: none;" name="filename" value= '<%= info[index].filename %>'>
-                                        <input type="submit" name="action" value="delete" style="margin: 5px;">
-                                        <input type="submit" name="action" value="download">
-                                    </div>
-                                </form>
-                            </div>
-                            <% } %>
-            </div>
+    <div>
 
 
-            <% }) %>
+
+        <% console.log(userfiles.length) %>
+
+            <% userfiles.forEach((info)=>{ %>
+
+                <button type="button" class="collapsible">
+                    <!-- <input type="text" name='<%info[0].username %>' value='<%=info[0].username %>'> -->
+                    <p>
+                        <span>
+                            <%= info[0].username %>
+                        </span>
+                        <span style="margin-left: 5cm;">
+                            <%= info[0].usedspace %> / <%= info[0].allowedspace %>
+                        </span>
+                        <span style="margin-left: 5cm;">
+                            <%= info.length -1  %> 
+                        </span>
+                    </p>
+                </button>
+
+                <div class="content">
+                    <% for(let index=1 ; index < info.length ; index++){ %>
+
+                        <div style="border-style: solid; border-color: black; border-width: thin;">
+                            <form action="/admin/userfiles" method="POST" style="margin: 10px;">
+                                <div>
+                                    <h2>
+                                        File: <%= info[index].filename %>
+
+                                    </h2>
+                                    <h2>
+                                        Size: <%= info[index].filesize %>Mb
+                                    </h2>
+                                </div>
+                                <div style="margin: 5px;">
+                                    <input type="text" name="username" style="display: none;"
+                                        value='<%=info[0].username %>'>
+                                    <input type="text" style="display: none;" name="filename"
+                                        value='<%= info[index].filename %>'>
+                                    <input type="submit" name="action" value="delete" style="margin: 5px;">
+                                    <input type="submit" name="action" value="download">
+                                </div>
+                            </form>
+                        </div>
+                        <% } %>
+                </div>
 
 
-                <script>
-                var coll = document.getElementsByClassName("collapsible");
-                var i;
+                <% }) %>
 
-                for (i = 0; i < coll.length; i++) {
-                    coll[i].addEventListener("click", function () {
-                        this.classList.toggle("active");
-                        var content = this.nextElementSibling;
-                        if (content.style.display === "block") {
-                            content.style.display = "none";
-                        } else {
-                            content.style.display = "block";
-                        }
-                    });
+    </div>
+
+
+    <script>
+        var coll = document.getElementsByClassName("collapsible");
+        var i;
+
+        for (i = 0; i < coll.length; i++) {
+            coll[i].addEventListener("click", function () {
+                this.classList.toggle("active");
+                var content = this.nextElementSibling;
+                if (content.style.display === "block") {
+                    content.style.display = "none";
+                } else {
+                    content.style.display = "block";
                 }
-            </script>
+            });
+        }
+    </script>
 
 </body>
 

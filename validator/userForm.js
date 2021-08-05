@@ -1,5 +1,10 @@
 const Joi = require('joi')
 
+/**
+ *validate input details for user registration 
+ * @param {object} requestObject input from user
+ * @return {Array} result of the validation 
+ */
 async function userRegisterValidation(requestObject) {
     let registration = Joi.object({
         name: Joi.string().max(30).required(),

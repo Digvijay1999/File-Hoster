@@ -1,5 +1,12 @@
 const DB = require('../db-config')
 
+/**
+ *returns the actions performed by user 
+ *like login,logout,file-upload,file-delete
+
+ * @param {string} user username 
+ * @return {Array} actions of user
+ */
 async function getAction(user) {
     console.log(user);
     console.log('user action accessed');

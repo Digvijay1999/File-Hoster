@@ -36,11 +36,13 @@ router
 
             await userupdate.deactivateUser(req.body.user_id);
             res.redirect('/admin/manageuser')
+           
 
         } else if (req.body.inactive == 'inactive') {
 
             await userupdate.activateUser(req.body.user_id)
-            res.redirect('/admin/manageuser')
+            res.redirect('admin/manageuser')
+            
 
         }
         //update user page
@@ -105,7 +107,7 @@ router
 
         const filepath = path.join(__dirname, `../public/user-files/${req.body.username}/${req.body.filename}`);
 
-    
+
 
         if (req.body.action == 'download') {
 

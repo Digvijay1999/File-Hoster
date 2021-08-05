@@ -1,5 +1,12 @@
 const DB = require('../db-config')
 
+
+/**
+ *creates the user into data base
+ *
+ * @param {object} payload
+ * @return {number} 
+ */
 async function createUser(payload) {
     let createUser = `INSERT INTO user_credentials (username,userpassword,access) 
         VALUES ('${payload.username}','${payload.userpassword}','true');`

@@ -8,12 +8,25 @@ let dbconfig = {
     port: 5432,
 }
 
+
+/**
+ *this function executes the passed query and 
+ *returns the array of results
+ * @param {String} query
+ * @param {any} values
+ * @return {Array} 
+ */
 async function executeQuery(query, values) {
     let client = await connectDB()
     let result = await client.query(query, values);
     return result['rows'];
 }
 
+/**
+ *this function checks if db exists or not if not exits then creates one and makes the connection with db 
+ *and returns the connected client
+ * @return {*} 
+ */
 async function connectDB() {
     try {
         let client = new Client(dbconfig)
@@ -47,6 +60,7 @@ async function connectDB() {
         }
     }
 }
+
 
 module.exports = {
     executeQuery: executeQuery,

@@ -1,7 +1,11 @@
 const DB = require('../../db-config')
 
+/**
+ *returns the total storage space (in mb) used by users 
+ * @param {number} user_id 
+ * @return {number} 
+ */
 async function totalusedspace(user_id) {
-
     let totalusedspace = `SELECT SUM(filesize)
     FROM user_files
     WHERE user_id = '${user_id}';`
