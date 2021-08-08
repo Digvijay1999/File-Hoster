@@ -3,7 +3,6 @@ const DB = require('../db-config')
 
 /**
  *creates the user into data base
- *
  * @param {object} payload
  * @return {number} 
  */

@@ -18,13 +18,13 @@ router
         res.render("registrationpage")
     })
     .post('/register', async (req, res) => {
-       let result =  await userSignUp.userRegisterValidation(req.body)
+        let result = await userSignUp.userRegisterValidation(req.body)
 
-       if (result.error) {
-           res.end(result.error.message)
-           console.log(result);
-           return
-       }
+        if (result.error) {
+            res.end(result.error.message)
+            console.log(result);
+            return
+        }
         //create new user and gets the user id for session creation
         let user_id = createuser.createUser(req.body)
         res.cookie('user', `${req.body.username}`)
@@ -49,12 +49,16 @@ router
         if (login_credential.length == 0) {
             //user dosent exists
             //user cant sign in
-            res.end('user does not exists')
+            // res.end('user does not exists')
+            let errorMessage = 'user does not exists'
+            res.render('homepage', { layout: accessDenied.ejs, errorMessage })
 
         } else if (login_credential[0].userpassword != req.body.userpassword) {
             //password is wrong
             //user cant sign in
-            res.end('please check userid or password')
+            // res.end('please check userid or password')
+            let errorMessage = 'please check userid or password'
+            res.render('homepage', { layout: accessDenied.ejs, errorMessage })
 
         } else if (login_credential[0].access) {
             //check if user have access or not if does then login if not then redirect to login page
@@ -68,8 +72,8 @@ router
                 res.render('MainUserInterface', { layout: './layouts/MainUserInterface' })
             }
         } else {
-            console.log('user dont have access');
-            res.redirect('/login')
+            let errorMessage = `you don't have access to this application`
+            res.render('homepage', { layout: accessDenied.ejs, errorMessage })
         }
     })
 

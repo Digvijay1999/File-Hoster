@@ -6,8 +6,7 @@ const DB = require('../db-config')
  * @param {string} username 
  * @return {number} user_id of user
  */
-async function userid(username) {
-    
+async function userid(username) {  
     let getuserid = `SELECT user_id FROM user_credentials WHERE username = '${username}'`;
     let res = await DB.executeQuery(getuserid);
     let user_id = res[0].user_id;
