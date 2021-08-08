@@ -3,14 +3,22 @@ const Path = require('path');
 const _ = require('lodash');
 const Fs = require('graceful-fs');
 
+// let dbConfig = {
+//     user: 'postgres',
+//     host: 'localhost',
+//     database: 'test13',
+//     password: 'testPass',
+//     port: 5442,
+// }
+
+
 let dbConfig = {
     user: 'postgres',
     host: 'localhost',
-    database: 'test13',
-    password: 'testPass',
-    port: 5442,
+    database: 'file-handler',
+    password: 'admin',
+    // port: 5442,
 }
-
 
 /**
  *this function executes the passed query and 

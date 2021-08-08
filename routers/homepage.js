@@ -33,14 +33,12 @@ router
 
     })
     .post('/login', async (req, res) => {
-
         let result = await loginCredentials.validateLoginDetails(req.body)
 
         if (result.error) {
             res.end(result.error.message)
             return
         }
-
         //login here, create session , sent to next page
         let loginquery = `SELECT username, userpassword,access FROM user_credentials WHERE username = '${req.body.username}' `
         let login_credential = await DB.executeQuery(loginquery)
@@ -50,15 +48,17 @@ router
             //user dosent exists
             //user cant sign in
             // res.end('user does not exists')
-            let errorMessage = 'user does not exists'
-            res.render('homepage', { layout: accessDenied.ejs, errorMessage })
+            let errorMessage = 'This user does not exists'
+            res.render('homepage', { layout: './layouts/accessDenied', errorMessage })
+
 
         } else if (login_credential[0].userpassword != req.body.userpassword) {
             //password is wrong
             //user cant sign in
             // res.end('please check userid or password')
             let errorMessage = 'please check userid or password'
-            res.render('homepage', { layout: accessDenied.ejs, errorMessage })
+            res.render('homepage', { layout: './layouts/accessDenied', errorMessage })
+
 
         } else if (login_credential[0].access) {
             //check if user have access or not if does then login if not then redirect to login page
@@ -73,8 +73,11 @@ router
             }
         } else {
             let errorMessage = `you don't have access to this application`
-            res.render('homepage', { layout: accessDenied.ejs, errorMessage })
+            res.render('homepage', { layout: './layouts/accessDenied', errorMessage })
+
         }
+
+
     })
 
 
