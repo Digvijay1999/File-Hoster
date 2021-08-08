@@ -20,7 +20,7 @@ CREATE TABLE IF NOT EXISTS user_files (
     user_id integer  NOT NULL ,
     username varchar(20) UNIQUE  NOT NULL ,
     directory text NOT NULL ,
-    filesize integer NOT NULL ,
+    filesize NUMERIC NOT NULL ,
     filename TEXT NOT NULL 
 );
 

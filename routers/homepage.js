@@ -9,11 +9,11 @@ app.use(express.static('public'))
 
 
 router
-    .get('/', (req, res) => {
+    .get('/', async (req, res) => {
         //renders starting page
         res.render('homepage', { layout: false })
     })
-    .get('/register', (req, res) => {
+    .get('/register', async (req, res) => {
         //redirect to register user form
         res.render("registrationpage")
     })
@@ -26,7 +26,7 @@ router
             return
         }
         //create new user and gets the user id for session creation
-        let user_id = createuser.createUser(req.body)
+        let user_id = await createuser.createUser(req.body)
         res.cookie('user', `${req.body.username}`)
         res.render('MainUserInterface', { layout: './layouts/MainUserInterface' })
         console.log('user created');

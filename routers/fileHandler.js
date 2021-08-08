@@ -21,64 +21,55 @@ router
         res.render('uploadFile', { layout: './layouts/uploadFile' })
     })
     .post('/upload', async (req, res) => {
-
-        var file = req.files.file
-        let fileSizeInMB = file.size / 1000000
-        let user_id = await userid.userid(req.cookies.user)
-        let totalspaceused = Number(await totalspaceusedbyuser.totalusedspace(user_id))
-        let allowedSpace = Number(await currentallowedspace.getAllowedSpace(user_id))
-        let spaceLeft = allowedSpace - totalspaceused;
-
-        if (totalspaceused < allowedSpace) {
-
-            if (fileSizeInMB < spaceLeft) {
-
-                if (req.files) {
-
-                    var filename = file.name
-
-                    let user = req.cookies.user;
-
-                    var dir = `./public/user-files/${user}`;
-                    console.log(dir);
-
-                    try {
+        try {
+            if (!req.cookies) {
+                throw 'User session is not configured.'
+            }
+            console.log(`Attempting to upload the ` + req.cookies.user);
+            var file = req.files.file
+            let fileSizeInMB = file.size / 1000000
+            let user_id = await userid.userid(req.cookies.user)
+            let totalspaceused = Number(await totalspaceusedbyuser.totalusedspace(user_id))
+            let allowedSpace = Number(await currentallowedspace.getAllowedSpace(user_id))
+            let spaceLeft = allowedSpace - totalspaceused;
+            if (totalspaceused < allowedSpace) {
+                if (fileSizeInMB < spaceLeft) {
+                    if (req.files) {
+                        var filename = file.name
+                        let user = req.cookies.user;
+                        var dir = `./public/user-files/${user}`;
+                        console.log(dir);
                         if (!fs.existsSync(dir)) {
                             fs.mkdirSync(dir)
                         }
-                    } catch (err) {
-                        console.error(err)
+                        filedir = `./public/user-files/${user}/${filename}`
+                        await file.mv(filedir, (error) => {
+                            if (error) {
+                                res.end('file could not be created please try again')
+                                throw `User file folder is not available to store the data`
+                            }
+                        })
+                        fileHandle.fileEntry(user, filedir, fileSizeInMB, filename)
+                        res.render('MainUserInterface', { layout: './layouts/MainUserInterface' })
+                        insertIntoAction.insertIntoAction(user, new Date().toISOString(), 'upload', filename)
+                    } else {
+                        throw `File is not available to upload`
                     }
+                } else if (fileSizeInMB > spaceLeft) {
+                    throw ` User don't have enough space to upload this file. Please contact to you admin for space.`
+                }
 
-                    filedir = `./public/user-files/${user}/${filename}`
-                    await file.mv(filedir, (error) => {
-                        if (error) {
-                            res.end('file could not be created please try again')
-                        }
-                    })
-
-                    fileHandle.fileEntry(user, filedir, fileSizeInMB,filename)
-
-                    res.render('MainUserInterface', { layout: './layouts/MainUserInterface' })
-
-                    insertIntoAction.insertIntoAction(user, new Date().toISOString(), 'upload', filename)
-
-                } else {res.end('file could not be uploaded')}
-
-            } else if (fileSizeInMB > spaceLeft) {
-
-                res.end('sorry no space')
-
+            } else {
+                throw ` User don't have enough space to upload this file. Please contact to you admin for space.`
             }
-
-        } else {
-            res.end('sorry no space')
+        } catch (error) {
+            console.log(error);
+            res.end(error)
         }
 
     }).get('/myfiles', async (req, res) => {
         let filesArray = []
         const directoryPath = path.join(__dirname, `../public/user-files/${req.cookies.user}`);
-
         fs.readdir(directoryPath, function (err, files) {
             //handling error
             if (err) {

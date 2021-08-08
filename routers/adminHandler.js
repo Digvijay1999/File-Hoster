@@ -36,13 +36,13 @@ router
 
             await userupdate.deactivateUser(req.body.user_id);
             res.redirect('/admin/manageuser')
-           
+
 
         } else if (req.body.inactive == 'inactive') {
 
             await userupdate.activateUser(req.body.user_id)
             res.redirect('admin/manageuser')
-            
+
 
         }
         //update user page
@@ -63,12 +63,9 @@ router
         res.render(dir, { useraction: useraction });
 
     }).get('/userStorage', async (req, res) => {
-        let storage = getalluserusage.usage()
-        storage.then((data) => {
-
-            let dir = path.join(`${__dirname}`, `../views/admin/userStorage.ejs`)
-            res.render(dir, { userUsage: data })
-        })
+        let storage = await getalluserusage.usage()
+        let dir = path.join(`${__dirname}`, `../views/admin/userStorage.ejs`)
+        res.render(dir, { userUsage: storage })
     }).post('/userStorage', async (req, res) => {
 
         if (req.body.action == 'edit') {
