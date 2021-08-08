@@ -1,11 +1,11 @@
 const { Client } = require('pg');
 
-let dbconfig = {
+let dbConfig = {
     user: 'postgres',
     host: 'localhost',
-    database: 'file-handler',
-    password: 'admin',
-    port: 5432,
+    database: 'test05',
+    password: 'testPass',
+    port: 5442,
 }
 
 
@@ -29,37 +29,36 @@ async function executeQuery(query, values) {
  */
 async function connectDB() {
     try {
-        let client = new Client(dbconfig)
+        let client = new Client(dbConfig)
         await client.connect();
         return client;
 
     } catch (error) {
-
         if (error.code === '3D000') {
-            console.log(`database "${dbconfig.database}" does not exist`);
-            let defaultConfiguration = { ...dbconfig }
-            defaultConfiguration.database = 'file-handler';
             try {
+                console.log(`database "${dbConfig.database}" does not exist`);
+                let defaultConfiguration = { ...dbConfig }
+                defaultConfiguration.database = 'postgres';
+                console.log(defaultConfiguration);
                 //Create database using default connection
                 let tempClient = new Client(defaultConfiguration);
                 await tempClient.connect()
-                console.log(`Seeding database: ${dbConfiguration.database}`);
-                await tempClient.query(`CREATE DATABASE "${dbConfiguration.database}"`);
+                console.log(`Seeding database: ${dbConfig.database}`);
+                await tempClient.query(`CREATE DATABASE "${dbConfig.database}"`);
                 console.log(`Database created.`);
+                tempClient = new Client(dbConfig);
+                await tempClient.connect()
+                await importDBSchema(client);
+                return client;
             } catch (error) {
-                connectDB()
+                console.log(error);
             }
-
-            client = new Client(dbConfiguration);
-            await client.connect()
-            await importDBSchema(client);
-            return client;
-
         } else {
             throw error
         }
     }
 }
+
 
 
 module.exports = {
