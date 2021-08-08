@@ -18,7 +18,13 @@ app.use(express.static('public'))
 
 router
     .get('/upload', (req, res) => {
-        res.render('uploadFile', { layout: './layouts/uploadFile' })
+        try {
+            console.log('');
+            res.render('uploadFile', { layout: './layouts/uploadFile' })
+        } catch (error) {
+            console.log(error);
+            throw error
+        }
     })
     .post('/upload', async (req, res) => {
         try {
