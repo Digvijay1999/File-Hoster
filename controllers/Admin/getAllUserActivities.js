@@ -11,8 +11,6 @@ async function  getAllUser() {
     return result
 }
 
-getAllUser()
-
 module.exports = {
     getAllUser: getAllUser
 }

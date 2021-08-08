@@ -2,10 +2,6 @@ const DB = require('../../db-config')
 const curretAllowedSpace = require('./getCurrentAllowedSpace')
 
 
-let data = usage()
-data.then((data) => {
-})
-
 async function usage() {
 
     var usageOfUsers = []
@@ -41,9 +37,9 @@ async function usage() {
         }
 
         //this happens after every loop is executed
-        let newPromise = new Promise((resolve, reject) => {
-            resolve(usageOfUsers)
-        })
+        // let newPromise = new Promise((resolve, reject) => {
+        //     resolve(usageOfUsers)
+        // })
 
         return newPromise
 

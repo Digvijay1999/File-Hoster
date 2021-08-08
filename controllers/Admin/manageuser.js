@@ -15,8 +15,6 @@ function users() {
     return result;
 }
 
-users()
-
 module.exports = {
     users: users
 }

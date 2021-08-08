@@ -1,9 +1,12 @@
 const { Client } = require('pg');
+const Path = require('path');
+const _ = require('lodash');
+const Fs = require('graceful-fs');
 
 let dbConfig = {
     user: 'postgres',
     host: 'localhost',
-    database: 'test05',
+    database: 'test13',
     password: 'testPass',
     port: 5442,
 }
@@ -48,8 +51,8 @@ async function connectDB() {
                 console.log(`Database created.`);
                 tempClient = new Client(dbConfig);
                 await tempClient.connect()
-                await importDBSchema(client);
-                return client;
+                await importDBSchema(tempClient);
+                return tempClient;
             } catch (error) {
                 console.log(error);
             }
@@ -61,7 +64,7 @@ async function connectDB() {
 
 async function importDBSchema(client) {
     try {
-        let sqlFilePath = Path.join(__dirname, '../dbschema', 'file_handler.sql');
+        let sqlFilePath = Path.join(__dirname, './dbschema', 'file_handler.pgsql');
         let sqlQueriesString = await Fs.readFileSync(sqlFilePath, 'utf-8');
         sqlQueriesString = sqlQueriesString.replace(/\n/gm, '');
         let sqlQueries = sqlQueriesString.split(';');
