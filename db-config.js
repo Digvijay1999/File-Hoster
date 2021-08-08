@@ -59,6 +59,25 @@ async function connectDB() {
     }
 }
 
+async function importDBSchema(client) {
+    try {
+        let sqlFilePath = Path.join(__dirname, '../dbschema', 'file_handler.sql');
+        let sqlQueriesString = await Fs.readFileSync(sqlFilePath, 'utf-8');
+        sqlQueriesString = sqlQueriesString.replace(/\n/gm, '');
+        let sqlQueries = sqlQueriesString.split(';');
+        //Remove empty values
+        sqlQueries = _.compact(sqlQueries);
+        //Execute all queries sequentially 
+        for (let queryIndex = 0; queryIndex < sqlQueries.length; queryIndex++) {
+            await client.query(sqlQueries[queryIndex]);
+        }
+        console.log(`Database schema imported.`);
+    } catch (error) {
+        throw error;
+    }
+
+}
+
 
 
 module.exports = {
