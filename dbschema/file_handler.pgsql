@@ -8,9 +8,9 @@ CREATE TABLE IF NOT EXISTS user_credentials (
 CREATE TABLE IF NOT EXISTS user_information (  
     user_id integer NOT NULL,
     name varchar(30),
-    address text,
+    address text DEFAULT 'On Earth',
     email varchar(128) UNIQUE,
-    age smallint,
+    age smallint DEFAULT 0,
     gender varchar(6),
     role smallint,
     FOREIGN KEY (user_id) REFERENCES user_credentials(user_id)
