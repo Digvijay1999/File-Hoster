@@ -10,54 +10,93 @@
 
 </head>
 
-<body style="text-align: center; background-color: gray;">
+<body style="text-align: center; background-color: whitesmoke;">
 
-    <div style="font-family:sans-serif; margin-bottom: 2cm; background-color: brown; padding: 5px;">
-        <h1>personal information</h1>
+    <div id="header">
+        <h1 id="headertext">Personal Information</h1>
     </div>
 
     <div">
 
         <form action="/homepage/register" method="POST">
             <div class="inputs">
-                Name <input type="text" name="name" required>
+                <div id="name">
+                    <label for="Name" class="required"> Name </label>
+                    <input type="text" name="name" required>
+                </div>
             </div>
 
             <div class="inputs">
-                username <input type="text" name="username" required>
+                <div id="username">
+                    <label for="username" class="required"> Username </label>
+                    <input type="text" name="username" required>
+                </div>
             </div>
 
             <div class="inputs">
-                Password <input type="text" name="userpassword" required>
+                <div id="passworddiv">
+                    <label for="userpassword" class="required"> Password </label>
+                    <input type="password" name="userpassword" id="password" required>
+                </div>
             </div>
 
             <div class="inputs">
-                Email <input type="email" name="useremail" required>
+                <div id="confirmPassword">
+                    <label for="ConfirmPass" class="required">Confirm Password </label>
+                    <input type="password" name="ConfirmPass"  id="ConfirmPass" required>
+                </div>
             </div>
 
             <div class="inputs">
-                select gender <select name="usergender" id="gender" >
-                    <option value="male" selected >male</option>
-                    <option value="female">female</option>
-                </select>
+                <div id="email">
+                    <label for="useremail" class="required"> Email </label>
+                    <input type="email" name="useremail" required>
+                </div>
             </div>
 
             <div class="inputs">
-                Age <input type="number" name="userage" >
+                <div id="genderdiv">
+                    <label id="gender" for="usergender"> Select Gender </label>
+                    <select style="font-size: medium;" name="usergender">
+                        <option value="male" selected>male</option>
+                        <option value="female">female</option>
+                    </select>
+                </div>
             </div>
 
             <div class="inputs">
+                <div id="age">
+                    Age <input type="number" name="userage">
+                </div>
+            </div>
 
-                address <textarea name="useraddress" cols="30" rows="5" style="resize: none;"></textarea>
-
+            <div class="inputs">
+                <div id="address">
+                    <label for="useraddress">Address</label>
+                    <textarea name="useraddress" cols="30" rows="5" style="resize: none;"></textarea>
+                </div>
             </div>
 
 
-            <div><input type="submit"></div>
+            <div  onclick="return passwordChecker()" ><input type="submit"></div>
 
         </form>
         </div>
 
 </body>
+<script>
 
+function passwordChecker() {
+    
+    let confpass = document.getElementById("ConfirmPass").value
+    let pass = document.getElementById("password").value
+
+    if(confirm != pass){
+        alert('password must match !')
+        return false
+    }
+
+}
+
+</script>
 </html>
