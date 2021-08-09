@@ -1,4 +1,5 @@
 const DB = require('../db-config')
+const fs = require('fs')
 
 
 /**
@@ -23,6 +24,13 @@ async function createUser(payload) {
     let createstoragespace = `INSERT INTO user_storagespace (user_id,space)
     VALUES('${user_id}','10')`
     await DB.executeQuery(createstoragespace);
+
+    filedir = `./public/user-files/${payload.username}`
+    await fs.mkdir(filedir, {recursive: true},(error) => {
+        if (error) {
+            throw `could not sign up please try again laters`
+        }
+    })
 
     return user_id;
 }

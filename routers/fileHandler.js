@@ -96,7 +96,7 @@ router
         //render action table for specific client
         let UserActions = await getAction.getAction(req.cookies.user);
         console.log(UserActions);
-        res.render('myActions', { files: UserActions })
+        res.render('myActions', { files: UserActions, layout: './layouts/MainUserInterface'})
 
     }).post('/filedownload', async (req, res) => {
         const filepath = path.join(__dirname, `../public/user-files/${req.cookies.user}/${req.body.file}`);
