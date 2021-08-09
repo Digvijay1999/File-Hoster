@@ -8,6 +8,7 @@ const admin = require('./routers/adminHandler')
 const layouts = require('express-ejs-layouts')
 const cookieparser = require('cookie-parser')
 const upload = require('express-fileupload')
+const CheckUserInDB = require('./controllers/userAndEmailChecker')
 const DB = require('./db-config');
 const path = require('path');
 app.use(upload());
@@ -15,22 +16,27 @@ app.use(cookieparser());
 app.use(express.urlencoded({ extended: false }));
 
 app.use(express.static('public'))
-app.use('/css',express.static(__dirname + 'public/css'))
+app.use('/css', express.static(__dirname + 'public/css'))
 
-app.set('view engine','ejs')
+app.set('view engine', 'ejs')
 app.use(layouts);
-app.set('layout','./layouts/universal.ejs')
+app.set('layout', './layouts/universal.ejs')
 
-app.listen(8000,() => {
+app.listen(8000, () => {
     console.log('server started at http://localhost:8000');
 })
 
 //routings start from here....
-app.use('/homepage',homepage);
+app.use('/homepage', homepage);
 
-app.use('/file',fileHandler);
+app.use('/file', fileHandler);
 
-app.use('/admin',admin);
+app.use('/admin', admin);
+
+app.get('/api/userCheck', async (req, res) => {
+   let result = await  CheckUserInDB.checker(req.query)
+   res.json(result);
+})
 
 
 
