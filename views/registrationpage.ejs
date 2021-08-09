@@ -18,7 +18,7 @@
 
     <div">
 
-        <form action="/homepage/register" method="POST">
+        <form action="/homepage/register" id="registrationform" method="POST">
             <div class="inputs">
                 <div id="name">
                     <label for="Name" class="required"> Name </label>
@@ -29,8 +29,11 @@
             <div class="inputs">
                 <div id="username">
                     <label for="username" class="required"> Username </label>
-                    <input type="text" name="username" required>
+                    <input type="text" id="inputusername" name="username" required>
                 </div>
+                <span id="spanforusername" style="  display: none; color: red; font-size: small; margin-left: 1.5cm;"
+                    id="user"> user name
+                    already exists ! try another one </span>
             </div>
 
             <div class="inputs">
@@ -43,15 +46,19 @@
             <div class="inputs">
                 <div id="confirmPassword">
                     <label for="ConfirmPass" class="required">Confirm Password </label>
-                    <input type="password" name="ConfirmPass"  id="ConfirmPass" required>
+                    <input type="password" name="ConfirmPass" id="ConfirmPass" required>
                 </div>
             </div>
 
             <div class="inputs">
                 <div id="email">
                     <label for="useremail" class="required"> Email </label>
-                    <input type="email" name="useremail" required>
+                    <input type="email" id="useremail" name="useremail" required>
                 </div>
+                <span id="spanforemail" style="display: none; color: red; font-size: small; margin-left: 1.5cm;"
+                    id="user"> email
+                    already registered !</span>
+
             </div>
 
             <div class="inputs">
@@ -78,7 +85,7 @@
             </div>
 
 
-            <div  onclick="return passwordChecker()" ><input type="submit"></div>
+            <div onclick="userCheck()"><input type="button" ></div>
 
         </form>
         </div>
@@ -86,17 +93,51 @@
 </body>
 <script>
 
-function passwordChecker() {
-    
-    let confpass = document.getElementById("ConfirmPass").value
-    let pass = document.getElementById("password").value
+    function userCheck() {
 
-    if(confirm != pass){
-        alert('password must match !')
-        return false
+        let confpass = document.getElementById("ConfirmPass").value
+        let pass = document.getElementById("password").value
+        if (confpass != pass) {
+            alert('password must match !')
+            return;
+        } else {
+
+            console.log('ajac called');
+
+            var username = document.getElementById('inputusername').value
+            var email = document.getElementById('useremail').value
+
+            var xrh = new XMLHttpRequest();
+
+            xrh.onload = async function () {
+                if (this.status == 200 && this.readyState == 4) {
+                    let result = await JSON.parse(this.response)
+
+                    if (result.user === 1) {
+                        document.getElementById('spanforusername').style.display = 'inline'
+                    }else{
+                        document.getElementById('spanforusername').style.display = 'none'
+                    }
+                    if (result.email === 1) {
+                        document.getElementById('spanforemail').style.display = 'inline'
+                    }else {
+                        document.getElementById('spanforemail').style.display = 'none'
+                    }
+
+
+                    if (!result.user && !result.email) {
+                        console.log('submit called');
+                        document.getElementById('registrationform').submit();
+                    }
+
+                }
+            }
+        }
+
+        xrh.open('GET', `http://localhost:8000/api/userCheck?username=${username}&email=${email}`, true)
+        xrh.send();
     }
 
-}
-
 </script>
+
 </html>
