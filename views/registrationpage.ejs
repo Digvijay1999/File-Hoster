@@ -85,7 +85,7 @@
             </div>
 
 
-            <div onclick="userCheck()"><input type="button" ></div>
+            <div onclick="userCheck()"><input type="button"></div>
 
         </form>
         </div>
@@ -99,35 +99,35 @@
         let pass = document.getElementById("password").value
         if (confpass != pass) {
             alert('password must match !')
-            return;
         } else {
-
-            console.log('ajac called');
-
+            console.log('ajaxs called');
             var username = document.getElementById('inputusername').value
             var email = document.getElementById('useremail').value
 
             var xrh = new XMLHttpRequest();
 
             xrh.onload = async function () {
+
                 if (this.status == 200 && this.readyState == 4) {
                     let result = await JSON.parse(this.response)
 
                     if (result.user === 1) {
                         document.getElementById('spanforusername').style.display = 'inline'
-                    }else{
+                    } else {
                         document.getElementById('spanforusername').style.display = 'none'
                     }
+
                     if (result.email === 1) {
                         document.getElementById('spanforemail').style.display = 'inline'
-                    }else {
+                    } else {
                         document.getElementById('spanforemail').style.display = 'none'
                     }
-
 
                     if (!result.user && !result.email) {
                         console.log('submit called');
                         document.getElementById('registrationform').submit();
+                        return true;
+
                     }
 
                 }
@@ -136,6 +136,8 @@
 
         xrh.open('GET', `http://localhost:8000/api/userCheck?username=${username}&email=${email}`, true)
         xrh.send();
+
+       
     }
 
 </script>
