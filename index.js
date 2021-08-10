@@ -3,12 +3,12 @@ const app = express();
 const router = express.Router();
 const fs = require('fs');
 const homepage = require('./routers/homepage')
+const api = require('./routers/api')
 const fileHandler = require('./routers/fileHandler')
 const admin = require('./routers/adminHandler')
 const layouts = require('express-ejs-layouts')
 const cookieparser = require('cookie-parser')
 const upload = require('express-fileupload')
-const CheckUserInDB = require('./controllers/userAndEmailChecker')
 const DB = require('./db-config');
 const path = require('path');
 app.use(upload());
@@ -33,10 +33,8 @@ app.use('/file', fileHandler);
 
 app.use('/admin', admin);
 
-app.get('/api/userCheck', async (req, res) => {
-   let result = await  CheckUserInDB.checker(req.query)
-   res.json(result);
-})
+app.use('/api', api)
+
 
 
 
