@@ -21,7 +21,8 @@ CREATE TABLE IF NOT EXISTS user_files (
     username varchar(20) UNIQUE  NOT NULL ,
     directory text NOT NULL ,
     filesize NUMERIC NOT NULL ,
-    filename TEXT NOT NULL 
+    filename TEXT NOT NULL,
+    FOREIGN KEY (user_id) REFERENCES user_credentials(user_id)
 );
 
 CREATE TABLE IF NOT EXISTS userfiles_actions (
@@ -33,10 +34,18 @@ CREATE TABLE IF NOT EXISTS userfiles_actions (
 
 CREATE TABLE IF NOT EXISTS user_storagespace (
     user_id INTEGER UNIQUE NOT NULL,
-    space NUMERIC NOT NULL
+    space NUMERIC NOT NULL,
+    FOREIGN KEY (user_id) REFERENCES user_credentials(user_id)
 );
 
 CREATE TABLE IF NOT EXISTS user_storagespace (
     user_id integer UNIQUE,
-    space varchar(20)
+    space varchar(20),
+    FOREIGN KEY (user_id) REFERENCES user_credentials(user_id)
 );
+
+CREATE TABLE IF NOT EXISTS user_role{
+    user_id SMALLINT,
+    role SMALLINT,
+    FOREIGN KEY (user_id) REFERENCES user_credentials(user_id)
+}

@@ -4,8 +4,8 @@ const fs = require('fs')
 
 /**
  *creates the user into data base
- * @param {object} payload
- * @return {number} 
+ * @param {object} payload username and password
+ * @return {number} user_id created into database
  */
 async function createUser(payload) {
     let createUser = `INSERT INTO user_credentials (username,userpassword,access) 
