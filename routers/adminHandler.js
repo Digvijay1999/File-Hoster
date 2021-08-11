@@ -41,7 +41,7 @@ router
         } else if (req.body.inactive == 'inactive') {
 
             await userupdate.activateUser(req.body.user_id)
-            res.redirect('admin/manageuser')
+            res.redirect('/admin/manageuser')
 
 
         }
@@ -51,8 +51,8 @@ router
 
         let username = req.body.username
 
-        deleteuser.deleteuser(username)
-        res.end('/admin/manageuser')
+        await deleteuser.deleteuser(username)
+        res.redirect('/admin/manageuser')
         //delete user and redirect to admin page
     })
     .get('/useractivities', async (req, res) => {

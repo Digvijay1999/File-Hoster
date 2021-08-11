@@ -7,13 +7,21 @@ const path = require('path');
  * @param {string} user username
  */
 async function deleteuser(user) {
-    let query = `DELETE FROM user_credentials WHERE username = '${user}'`
-    await DB.executeQuery(query)
+    try {
+        let query = `DELETE FROM user_credentials WHERE username = '${user}'`
+        await DB.executeQuery(query)
+    } catch (error) {
+        console.log('error inside deletefrom user-cred');
+    }
     const filepath = path.join(__dirname, `../../public/user-files/${user}`);
     fs.rmdirSync(filepath, { recursive: true });
 
-    let deleteAction = `DELETE FROM userfiles_actions WHERE username = ${user}`
-    DB.executeQuery(deleteAction)
+    try {
+        let deleteAction = `DELETE FROM userfiles_actions WHERE username = '${user}'`
+        DB.executeQuery(deleteAction)
+    } catch (error) {
+        console.log('error inside deletefrom user_filesactions');
+    }
 }
 
 module.exports = {
