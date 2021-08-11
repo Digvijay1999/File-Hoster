@@ -13,7 +13,7 @@ CREATE TABLE IF NOT EXISTS user_information (
     age smallint DEFAULT 0,
     gender varchar(6),
     role smallint,
-    FOREIGN KEY (user_id) REFERENCES user_credentials(user_id)
+    FOREIGN KEY (user_id) REFERENCES user_credentials(user_id) ON DELETE CASCADE
 );
 
 CREATE TABLE IF NOT EXISTS user_files (
@@ -22,7 +22,7 @@ CREATE TABLE IF NOT EXISTS user_files (
     directory text NOT NULL ,
     filesize NUMERIC NOT NULL ,
     filename TEXT NOT NULL,
-    FOREIGN KEY (user_id) REFERENCES user_credentials(user_id)
+    FOREIGN KEY (user_id) REFERENCES user_credentials(user_id) ON DELETE CASCADE
 );
 
 CREATE TABLE IF NOT EXISTS userfiles_actions (
@@ -35,17 +35,11 @@ CREATE TABLE IF NOT EXISTS userfiles_actions (
 CREATE TABLE IF NOT EXISTS user_storagespace (
     user_id INTEGER UNIQUE NOT NULL,
     space NUMERIC NOT NULL,
-    FOREIGN KEY (user_id) REFERENCES user_credentials(user_id)
+    FOREIGN KEY (user_id) REFERENCES user_credentials(user_id) ON DELETE CASCADE
 );
 
-CREATE TABLE IF NOT EXISTS user_storagespace (
-    user_id integer UNIQUE,
-    space varchar(20),
-    FOREIGN KEY (user_id) REFERENCES user_credentials(user_id)
-);
-
-CREATE TABLE IF NOT EXISTS user_role{
-    user_id SMALLINT,
-    role SMALLINT,
-    FOREIGN KEY (user_id) REFERENCES user_credentials(user_id)
-}
+CREATE TABLE IF NOT EXISTS user_role(
+    role_id SMALLINT,
+    role VARCHAR(30),
+    PRIMARY KEY (role_id)
+)
