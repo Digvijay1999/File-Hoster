@@ -1,5 +1,6 @@
 const DB = require('../db-config')
 const fs = require('fs')
+const role = require('../controllers/roleUpdater')
 
 
 /**
@@ -8,6 +9,18 @@ const fs = require('fs')
  * @return {number} user_id created into database
  */
 async function createUser(payload) {
+
+    let role;
+    let checkTable = `SELECT EXISTS (SELECT 1 FROM user_credentials);`
+    let isTableEmpty = await DB.executeQuery(checkTable);
+    if (isTableEmpty[0].exists) {
+        console.log('table is not empty');
+        role = 0;
+    } else {
+        console.log('table is empty');
+        role = 1;
+    }
+
     let createUser = `INSERT INTO user_credentials (username,userpassword,access) 
         VALUES ('${payload.username}','${payload.userpassword}','true');`
     await DB.executeQuery(createUser);
@@ -15,10 +28,11 @@ async function createUser(payload) {
     let getuserid = `SELECT user_id FROM user_credentials WHERE username = '${payload.username}'`;
     let result = await DB.executeQuery(getuserid);
     user_id = result[0].user_id;
-    let temprole = 0;
+
+
 
     let insertUserInfo = `INSERT INTO user_information (user_id,name,address,email,age,gender,role) 
-            VALUES ('${user_id}','${payload.name}','${payload.useraddress}','${payload.useremail}','${payload.userage}','${payload.usergender}','${temprole}');`
+            VALUES ('${user_id}','${payload.name}','${payload.useraddress}','${payload.useremail}','${payload.userage}','${payload.usergender}','${role}');`
     await DB.executeQuery(insertUserInfo);
 
     let createstoragespace = `INSERT INTO user_storagespace (user_id,space)
@@ -26,11 +40,12 @@ async function createUser(payload) {
     await DB.executeQuery(createstoragespace);
 
     filedir = `./public/user-files/${payload.username}`
-    await fs.mkdir(filedir, {recursive: true},(error) => {
+    await fs.mkdir(filedir, { recursive: true }, (error) => {
         if (error) {
             throw `could not sign up please try again laters`
         }
     })
+
 
     return user_id;
 }
