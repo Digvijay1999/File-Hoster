@@ -9,6 +9,7 @@ const gettotalspaceusedbyuser = require('../controllers/Admin/gettotalspaceusedb
 const userupdate = require('../controllers/Admin/updateuser');
 const logincred = require('../controllers/loginCredChecker');
 const fileHandle = require('../controllers/UserFileEntryToDB')
+app.use(express.urlencoded({extended:false}))
 const DB = require('../db-config');
 const fs = require('fs');
 
@@ -34,8 +35,8 @@ router
             let userRole = await DB.executeQuery(role)
               //if user is admin
             if (userRole[0].role == 1) {
-                let dir = path.join(`${__dirname}`, `../views/admin/adminHomePage.ejs`)
-                res.render(dir)
+                res.cookie('user',req.body.username)
+                res.redirect(`/admin/adminPanel/?user=${req.body.username}`)
 
             } else {
                 let dir = path.join(`${__dirname}`, `../views/admin/adminLogin.ejs`)
@@ -59,7 +60,7 @@ router
 
         let dir = path.join(`${__dirname}`, `../views/admin/manageuser.ejs`)
         let AllUsers = await manageuser.users()
-        res.render(dir, { AllUsers: AllUsers })
+        res.render(dir, { AllUsers: AllUsers, user:req.cookies.user ,layout:'./layouts/layout_with_navbar_admin.ejs' })
 
     }).post('/updateuser', async (req, res) => {
 
@@ -104,7 +105,7 @@ router
 
         let useraction = await getuseractions.getAllUser()
         let dir = path.join(`${__dirname}`, `../views/admin/useractivities.ejs`)
-        res.render(dir, { useraction: useraction });
+        res.render(dir, { useraction: useraction, user:req.cookies.user ,layout:'./layouts/layout_with_navbar_admin.ejs'});
 
     }).get('/userStorage', async (req, res) => {
 
@@ -116,7 +117,7 @@ router
 
         let storage = await getalluserusage.usage()
         let dir = path.join(`${__dirname}`, `../views/admin/userStorage.ejs`)
-        res.render(dir, { userUsage: storage })
+        res.render(dir, { userUsage: storage, user:req.cookies.user ,layout:'./layouts/layout_with_navbar_admin.ejs'})
     }).post('/userStorage', async (req, res) => {
 
         if (!req.cookies.user) {
@@ -157,7 +158,7 @@ router
             console.log(userfiles);
 
             let dir = path.join(`${__dirname}`, `../views/admin/userfiles.ejs`)
-            res.render(dir, { userfiles })
+            res.render(dir, {user:req.cookies.user , userfiles ,layout: './layouts/layout_with_navbar_admin.ejs' })
         }
 
 
@@ -186,6 +187,15 @@ router
         }
 
 
+    }).get('/adminPanel',(req,res)=>{
+        if (!req.cookies.user) {
+            res.send(403)
+            res.end()
+            return
+        }
+        console.log(req.cookies.user);
+        let dir = path.join(`${__dirname}`, `../views/admin/adminHomePage.ejs`)
+        res.render(dir,{ user:req.cookies.user , layout : './layouts/layout_with_navbar_admin.ejs'})
     })
 
 module.exports = router;
