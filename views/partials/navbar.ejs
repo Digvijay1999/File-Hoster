@@ -8,7 +8,7 @@
     <style>
         ul {
             list-style-type: none;
-            margin-left: 30cm;
+            margin-left: 25cm;
             padding: 0;
             overflow: hidden;
             background-color: #0063b2ff;
@@ -66,13 +66,17 @@
 </head>
 
 <body>
-    <div style="padding: 20px; background-color: #0063b2ff;">
+
+    <div style="padding: 20px; background-color: #0063b2ff; display: flex;">
+        
+        <span style="margin-top: 5px;" > <h2>Welcome <%= user%> </h2>  </span>
+
         <ul>
             <li class="dropdown">
                 <a href="javascript:void(0)" class="dropbtn">MENU</a>
                 <div class="dropdown-content">
-                    <a href="/homepage/logout"> Logout</a>
-                    <a href="/file"> Home</a>
+                    <a href="/logout"> Logout</a>
+                    <a href='/file/filemanager?user=&<%=user%>'> Home</a>
                 </div>
             </li>
         </ul>
