@@ -7,6 +7,7 @@ CREATE TABLE IF NOT EXISTS user_credentials (
 
 CREATE TABLE IF NOT EXISTS user_information (  
     user_id integer NOT NULL,
+    username varchar(20) UNIQUE  NOT NULL,
     name varchar(30),
     address text DEFAULT 'On Earth',
     email varchar(128) UNIQUE,
@@ -17,8 +18,8 @@ CREATE TABLE IF NOT EXISTS user_information (
 );
 
 CREATE TABLE IF NOT EXISTS user_files (
-    user_id integer  NOT NULL ,
-    username varchar(20) UNIQUE  NOT NULL ,
+    user_id integer NOT NULL ,
+    username varchar(20) NOT NULL ,
     directory text NOT NULL ,
     filesize NUMERIC NOT NULL ,
     filename TEXT NOT NULL,
@@ -26,7 +27,7 @@ CREATE TABLE IF NOT EXISTS user_files (
 );
 
 CREATE TABLE IF NOT EXISTS userfiles_actions (
-    username VARCHAR UNIQUE NOT NULL,
+    username VARCHAR(20) NOT NULL,
     time VARCHAR(50),
     action VARCHAR(20),
     file_name TEXT NOT NULL
