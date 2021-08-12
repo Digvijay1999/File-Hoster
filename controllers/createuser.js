@@ -31,8 +31,8 @@ async function createUser(payload) {
 
 
 
-    let insertUserInfo = `INSERT INTO user_information (user_id,name,address,email,age,gender,role) 
-            VALUES ('${user_id}','${payload.name}','${payload.useraddress}','${payload.useremail}','${payload.userage}','${payload.usergender}','${role}');`
+    let insertUserInfo = `INSERT INTO user_information (user_id,username,name,address,email,age,gender,role) 
+            VALUES ('${user_id}','${payload.username}','${payload.name}','${payload.useraddress}','${payload.useremail}','${payload.userage}','${payload.usergender}','${role}');`
     await DB.executeQuery(insertUserInfo);
 
     let createstoragespace = `INSERT INTO user_storagespace (user_id,space)
