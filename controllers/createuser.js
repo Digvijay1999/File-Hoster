@@ -14,10 +14,8 @@ async function createUser(payload) {
     let checkTable = `SELECT EXISTS (SELECT 1 FROM user_credentials);`
     let isTableEmpty = await DB.executeQuery(checkTable);
     if (isTableEmpty[0].exists) {
-        console.log('table is not empty');
         role = 0;
     } else {
-        console.log('table is empty');
         role = 1;
     }
 
