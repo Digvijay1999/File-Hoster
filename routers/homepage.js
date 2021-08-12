@@ -28,7 +28,7 @@ router
         //create new user and gets the user id for session creation
         let user_id = await createuser.createUser(req.body)
         res.cookie('user', `${req.body.username}`)
-        res.render('MainUserInterface', { layout: './layouts/MainUserInterface' })
+        res.redirect(`/file/filemanager/?username=${req.body.username}`)
         console.log('user created');
 
     })
@@ -47,7 +47,8 @@ router
             //check if user have access or not if does then login if not then redirect to login page
             if (login_credential.length && login_credential[0].userpassword == req.body.userpassword) {
                 res.cookie('user', `${login_credential[0].username}`)
-                res.render('MainUserInterface', { layout: './layouts/MainUserInterface' })
+                // res.render('MainUserInterface', { layout: './layouts/MainUserInterface' })
+                res.redirect(`/file/filemanager/?username=${req.body.username}`)
             }
         } else {
             res.sent(`oops, you don't have access to this page sorry`)

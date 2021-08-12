@@ -33,7 +33,17 @@ app.use('/file', fileHandler);
 
 app.use('/admin', admin);
 
-app.use('/api', api)
+app.use('/api', api, (req,res) =>{
+
+    if (!req.cookies.user) {
+        return
+    }
+
+} );
+
+app.get('/logout', (req, res) => {
+    res.clearCookie('user').redirect('/homepage')
+})
 
 
 

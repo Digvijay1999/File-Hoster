@@ -18,15 +18,26 @@ app.use(express.static('public'))
 
 router
     .get('/upload', (req, res) => {
+        if (!req.cookies.user) {
+            res.status(403)
+            res.end()
+            return
+        }
         try {
             console.log('');
-            res.render('uploadFile', { layout: './layouts/uploadFile' })
+            let user = req.cookies.user
+            res.render('uploadFile', { user: user, layout: './layouts/uploadFile' })
         } catch (error) {
             console.log(error);
             throw error
         }
     })
     .post('/upload', async (req, res) => {
+        if (!req.cookies.user) {
+            res.status(403)
+            res.end()
+        }
+
         try {
             if (!req.cookies) {
                 throw 'User session is not configured.'
@@ -56,7 +67,7 @@ router
                             }
                         })
                         fileHandle.fileEntry(user, filedir, fileSizeInMB, filename)
-                        res.render('MainUserInterface', { layout: './layouts/MainUserInterface' })
+                        res.render('MainUserInterface', { user: user, layout: './layouts/MainUserInterface' })
                         insertIntoAction.insertIntoAction(user, new Date().toISOString(), 'upload', filename)
                     } else {
                         throw `File is not available to upload`
@@ -74,6 +85,13 @@ router
         }
 
     }).get('/myfiles', async (req, res) => {
+
+        if (!req.cookies.user) {
+            res.status(403)
+            res.end()
+            return
+        }
+
         let filesArray = []
         const directoryPath = path.join(__dirname, `../public/user-files/${req.cookies.user}`);
         fs.readdir(directoryPath, function (err, files) {
@@ -88,17 +106,29 @@ router
             });
 
             // show files of user
-            res.render('myfiles', { files: filesArray, layout: './layouts/MainUserInterface' })
+            let user = req.cookies.user
+            res.render('myfiles', { files: filesArray, user: user, layout: './layouts/MainUserInterface' })
         })
 
     }).get('/myactions', async (req, res) => {
-
+        if (!req.cookies.user) {
+            res.status(403)
+            res.end()
+            return
+        }
         //render action table for specific client
         let UserActions = await getAction.getAction(req.cookies.user);
         console.log(UserActions);
-        res.render('myActions', { files: UserActions, layout: './layouts/MainUserInterface'})
+        let user = req.cookies.user
+        res.render('myActions', { user: user, files: UserActions, layout: './layouts/MainUserInterface' })
 
     }).post('/filedownload', async (req, res) => {
+
+        if (!req.cookies.user) {
+            res.status(403)
+            res.end()
+            return
+        }
         const filepath = path.join(__dirname, `../public/user-files/${req.cookies.user}/${req.body.file}`);
 
         if (req.body.action == 'download') {
@@ -117,6 +147,15 @@ router
 
         }
 
+    }).get('/filemanager', (req, res) => {
+
+        if (req.cookies.user) {
+            let user = req.cookies.user
+            res.render('MainUserInterface', { user: user, layout: './layouts/MainUserInterface' })
+        } else {
+            res.status(403)
+            res.end()
+        }
     })
 
 module.exports = router;
