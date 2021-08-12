@@ -15,12 +15,15 @@ async function checker(reqBody) {
         let result = await DB.executeQuery(accessCheck)
 
         if (result[0].access) {
-
+            //check if password matches
             let result = await DB.executeQuery(checkUsernamePassword);
 
             if (result[0].userpassword == reqBody.password) {
-                return 1;
-                //access granted user exists, has access, password matched
+
+                //user exists, password matched , check the role
+
+                return '1'
+
             } else {
                 return 'nopassword'
             }
@@ -34,6 +37,6 @@ async function checker(reqBody) {
 
 }
 
-module.exports = { 
+module.exports = {
     checker
 }
