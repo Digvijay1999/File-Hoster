@@ -9,23 +9,31 @@
             color: white;
             cursor: pointer;
             padding: 10px;
-            width: 110%;
-            border: none;
-            text-align: left;
-            outline: none;
-            font-size: 18px;
-        }
-
-        #header {
-            background-color: black;
-            color: white;
-            cursor: pointer;
-            padding: 15px;
             width: 100%;
             border: none;
             text-align: left;
             outline: none;
+            font-size: 18px;
+
+        }
+
+        #header {
+            text-align: center;
+            background-color: black;
+            color: white;
+            cursor: pointer;
+            padding: 15px;
+            width: inherit;
+            border: none;
+            outline: none;
             font-size: 15px;
+            display: flex;
+        }
+
+        .span {
+            margin-left: 4cm;
+            width: 4cm;
+            /* margin-right: 3cm; */
         }
 
         .active,
@@ -39,6 +47,12 @@
             overflow: hidden;
             background-color: #f1f1f1;
         }
+
+        .flex {
+            margin-left: 5cm;
+            height: 1cm;
+            width: 4cm;
+        }
     </style>
     <title>Admin | userfiles </title>
 </head>
@@ -46,20 +60,18 @@
 <body>
 
     <div id="header">
-        <span style="font-weight: bold; font-size: x-large;">
-             User
-        </span>
-        <span style="margin-left: 4cm; font-weight: bold; font-size:  x-large;">
+        <div class="span" style="font-weight: bold; font-size: x-large;">
+            User
+        </div>
+        <div class="span" style="font-weight: bold; font-size:  x-large;">
             Space Used
-        </span>
-        <span style="margin-left: 4cm; font-weight: bold; font-size:  x-large;">
+        </div>
+        <div class="span" style="font-weight: bold; font-size:  x-large;">
             Total Files
-        </span>
+        </div>
     </div>
 
     <div>
-
-
 
         <% console.log(userfiles.length) %>
 
@@ -67,34 +79,44 @@
 
                 <button type="button" class="collapsible">
                     <!-- <input type="text" name='<%info[0].username %>' value='<%=info[0].username %>'> -->
-                    <p>
-                        <span>
+                    <div style="display: flex;">
+
+                        <div class="flex">
                             <%= info[0].username %>
-                        </span>
-                        <span style="margin-left: 5cm;">
-                            <%= info[0].usedspace %> / <%= info[0].allowedspace %>
-                        </span>
-                        <span style="margin-left: 5cm;">
-                            <%= info.length -1  %> 
-                        </span>
-                    </p>
+                        </div>
+
+                        <div class="flex">
+                            <%= info[0].usedspace %> mb / <%= info[0].allowedspace %> mb
+                        </div>
+
+                        <div class="flex">
+                            <%= info.length -1 %>
+                        </div>
+
+                    </div>
                 </button>
 
-                <div class="content">
+                <div class="content" style="padding: 5px;">
                     <% for(let index=1 ; index < info.length ; index++){ %>
 
-                        <div style="border-style: solid; border-color: black; border-width: thin;">
+                        <div
+                            style="border-style: solid; border-color: black; border-width: thin; font-size: small; width: unset;">
                             <form action="/admin/userfiles" method="POST" style="margin: 10px;">
-                                <div>
-                                    <h2>
-                                        File: <%= info[index].filename %>
+                                <div style="display: flex;">
+                                    <div style="width: 50%;" >
+                                        <h2 style="display: inline;">
+                                            File: <%= info[index].filename %>
 
-                                    </h2>
-                                    <h2>
-                                        Size: <%= info[index].filesize %>Mb
-                                    </h2>
+                                        </h2>
+                                    </div>
+
+                                    <div style="width: 50%;">
+                                        <h2 style="display: inline; margin-left: 2cm;">
+                                            Size: <%= info[index].filesize %>Mb
+                                        </h2>
+                                    </div>
                                 </div>
-                                <div style="margin: 5px;">
+                                <div style="display: inline; margin-left: 2cm;">
                                     <input type="text" name="username" style="display: none;"
                                         value='<%=info[0].username %>'>
                                     <input type="text" style="display: none;" name="filename"
@@ -105,13 +127,10 @@
                             </form>
                         </div>
                         <% } %>
+
                 </div>
-
-
                 <% }) %>
-
     </div>
-
 
     <script>
         var coll = document.getElementsByClassName("collapsible");
