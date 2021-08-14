@@ -33,8 +33,8 @@ async function createUser(payload) {
             VALUES ('${user_id}','${payload.username.trim()}','${payload.name}','${payload.useraddress}','${payload.useremail}','${payload.userage}','${payload.usergender}','${role}');`
     await DB.executeQuery(insertUserInfo);
 
-    let createstoragespace = `INSERT INTO user_storagespace (user_id,space)
-    VALUES('${user_id}','10')`
+    let createstoragespace = `INSERT INTO user_storagespace (user_id,username,space)
+    VALUES('${user_id}','${payload.username.trim()}','10')`
     await DB.executeQuery(createstoragespace);
 
     filedir = `./public/user-files/${payload.username.trim()}`
