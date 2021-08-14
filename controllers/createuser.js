@@ -20,24 +20,24 @@ async function createUser(payload) {
     }
 
     let createUser = `INSERT INTO user_credentials (username,userpassword,access) 
-        VALUES ('${payload.username}','${payload.userpassword}','true');`
+        VALUES ('${payload.username.trim()}','${payload.userpassword}','true');`
     await DB.executeQuery(createUser);
 
-    let getuserid = `SELECT user_id FROM user_credentials WHERE username = '${payload.username}'`;
+    let getuserid = `SELECT user_id FROM user_credentials WHERE username = '${payload.username.trim()}'`;
     let result = await DB.executeQuery(getuserid);
     user_id = result[0].user_id;
 
 
 
     let insertUserInfo = `INSERT INTO user_information (user_id,username,name,address,email,age,gender,role) 
-            VALUES ('${user_id}','${payload.username}','${payload.name}','${payload.useraddress}','${payload.useremail}','${payload.userage}','${payload.usergender}','${role}');`
+            VALUES ('${user_id}','${payload.username.trim()}','${payload.name}','${payload.useraddress}','${payload.useremail}','${payload.userage}','${payload.usergender}','${role}');`
     await DB.executeQuery(insertUserInfo);
 
     let createstoragespace = `INSERT INTO user_storagespace (user_id,space)
     VALUES('${user_id}','10')`
     await DB.executeQuery(createstoragespace);
 
-    filedir = `./public/user-files/${payload.username}`
+    filedir = `./public/user-files/${payload.username.trim()}`
     await fs.mkdir(filedir, { recursive: true }, (error) => {
         if (error) {
             throw `could not sign up please try again laters`
