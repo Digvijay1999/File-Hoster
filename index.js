@@ -43,6 +43,10 @@ app.get('/logout', (req, res) => {
     res.clearCookie('user').redirect('/homepage')
 })
 
+app.get('/logout/admin', (req, res) => {
+    res.clearCookie('admin').redirect('/admin/login')
+})
+
 app.get('*', function (req, res) {
     res.status(404);
     res.end()
