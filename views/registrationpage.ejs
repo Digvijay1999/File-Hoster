@@ -7,6 +7,11 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>new user</title>
     <link rel="stylesheet" href="/css/registerpage.css">
+    <style> 
+    button:hover{
+        cursor: pointer; 
+        background-color: rgb(102, 102, 204);
+    }</style>
 
 </head>
 
@@ -16,7 +21,7 @@
         <h1 id="headertext">Personal Information</h1>
     </div>
 
-    <div">
+    <div>
 
         <form action="/homepage/register" id="registrationform" method="POST">
             <div class="inputs">
@@ -73,21 +78,21 @@
 
             <div class="inputs">
                 <div id="age">
-                    Age <input type="number" name="userage">
+                    Age <input type="number" name="userage" required>
                 </div>
             </div>
 
             <div class="inputs">
                 <div id="address">
                     <label for="useraddress">Address</label>
-                    <textarea name="useraddress" cols="30" rows="5" style="resize: none;"></textarea>
+                    <textarea name="useraddress" cols="30" rows="5" style="resize: none; " required></textarea>
                 </div>
             </div>
 
-
-            <div onclick="userCheck()"><input type="button"></div>
-
+                 <input style="display: none;" id="submit" type="submit"> 
+            
         </form>
+        <button style="width: 2cm; height: 0.7cm;" onclick="userCheck()"> Sign up </button>
         </div>
 
 </body>
@@ -124,8 +129,7 @@
                     }
 
                     if (!result.user && !result.email) {
-                        console.log('submit called');
-                        document.getElementById('registrationform').submit();
+                        document.getElementById('submit').click()
                         return true;
 
                     }
@@ -137,7 +141,7 @@
         xrh.open('GET', `http://localhost:8000/api/userCheck?username=${username}&email=${email}`, true)
         xrh.send();
 
-       
+
     }
 
 </script>
