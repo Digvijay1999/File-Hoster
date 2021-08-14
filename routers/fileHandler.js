@@ -147,11 +147,18 @@ router
 
         }
 
-    }).get('/filemanager', (req, res) => {
+    }).get('/filemanager', async (req, res) => {
 
         if (req.cookies.user) {
             let user = req.cookies.user
-            res.render('MainUserInterface', { user: user, layout: './layouts/MainUserInterface' })
+
+            let space = `SELECT us.username , (SELECT SUM (uf.filesize) FROM user_files as uf) as SUM, us.space as space 
+            FROM user_storagespace as us 
+            WHERE username = '${req.cookies.user}'
+            `
+            let storageSpace = await DB.executeQuery(space) 
+
+            res.render('MainUserInterface', { user: user, storageSpace: storageSpace[0], layout: './layouts/MainUserInterface' })
         } else {
             res.status(403)
             res.end()
