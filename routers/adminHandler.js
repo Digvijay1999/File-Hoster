@@ -35,7 +35,7 @@ router
             let userRole = await DB.executeQuery(role)
               //if user is admin
             if (userRole[0].role == 1) {
-                res.cookie('admin',req.body.username)
+                res.cookie('admin',req.body.username.trim())
                 res.redirect(`/admin/adminPanel/?user=${req.body.username}`)
 
             } else {
