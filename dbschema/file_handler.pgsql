@@ -35,6 +35,7 @@ CREATE TABLE IF NOT EXISTS userfiles_actions (
 
 CREATE TABLE IF NOT EXISTS user_storagespace (
     user_id INTEGER UNIQUE NOT NULL,
+    username VARCHAR(20) NOT NULL,
     space NUMERIC NOT NULL,
     FOREIGN KEY (user_id) REFERENCES user_credentials(user_id) ON DELETE CASCADE
 );
