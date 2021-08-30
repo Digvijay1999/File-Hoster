@@ -8,11 +8,11 @@ const userid = require('./getuserid')
  * @param {number} filesize size of the file in mb
  * @param {string} filename file name
  */
-async function fileEntry(user, directory, filesize,filename) {
+async function fileEntry(user, directory, filesize, filename) {
     let user_id = await userid.userid(user)
     let insertFile = `INSERT INTO user_files (user_id,username,directory,filesize,filename)
     VALUES('${user_id}','${user}','${directory}','${filesize}','${filename}')`
-    await DB.executeQuery(insertFile)
+    return await DB.executeQuery(insertFile)
 }
 
 
