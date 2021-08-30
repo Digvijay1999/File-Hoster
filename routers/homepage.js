@@ -4,6 +4,7 @@ const router = express.Router();
 const createuser = require('../controllers/createuser');
 const loginCredentials = require('../validator/userLogin');
 const userSignUp = require('../validator/userForm');
+const getID = require('../controllers/getuserid');
 const DB = require('../db-config');
 app.use(express.static('public'))
 
@@ -46,7 +47,9 @@ router
         if (login_credential[0].access) {
             //check if user have access or not if does then login if not then redirect to login page
             if (login_credential.length && login_credential[0].userpassword == req.body.userpassword) {
+               const userID = await getID.userid(req.body.username);
                 res.cookie('user', `${login_credential[0].username}`)
+                res.cookie('userID', `${userID}`);
                 // res.render('MainUserInterface', { layout: './layouts/MainUserInterface' })
                 res.redirect(`/file/filemanager/?username=${req.body.username}`)
             }
