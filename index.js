@@ -40,7 +40,9 @@ app.use('/api', api, (req, res) => {
 });
 
 app.get('/logout', (req, res) => {
+    res.clearCookie('userID');
     res.clearCookie('user').redirect('/homepage')
+    
 })
 
 app.get('/logout/admin', (req, res) => {
