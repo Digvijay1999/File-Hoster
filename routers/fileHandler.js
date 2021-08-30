@@ -12,21 +12,23 @@ const insertIntoAction = require('../controllers/insertActionsToDB');
 const insertActionsToDB = require('../controllers/insertActionsToDB');
 const currentallowedspace = require('../controllers/Admin/getCurrentAllowedSpace');
 const totalspaceusedbyuser = require('../controllers/Admin/gettotalspaceusedbyuser')
+const usedAndAllowedSpace = require('../controllers/usedSpaceAndAllowedSpace');
+
 
 app.use(express.static('public'))
 
 
 router
-    .get('/upload', (req, res) => {
+    .get('/upload', async (req, res) => {
         if (!req.cookies.user) {
             res.status(403)
             res.end()
             return
         }
         try {
-            console.log('');
             let user = req.cookies.user
-            res.render('uploadFile', { user: user, layout: './layouts/uploadFile' })
+            let storageSpace = await usedAndAllowedSpace.getData(req.cookies.userID);
+            res.render('uploadFile', { user: user,storageSpace: storageSpace, layout: './layouts/MainUserInterface' })
         } catch (error) {
             console.log(error);
             throw error
@@ -45,7 +47,7 @@ router
             console.log(`Attempting to upload the ` + req.cookies.user);
             var file = req.files.file
             let fileSizeInMB = file.size / 1000000
-            let user_id = await userid.userid(req.cookies.user)
+            let user_id = req.cookies.userID
             let totalspaceused = Number(await totalspaceusedbyuser.totalusedspace(user_id))
             let allowedSpace = Number(await currentallowedspace.getAllowedSpace(user_id))
             let spaceLeft = allowedSpace - totalspaceused;
@@ -66,9 +68,11 @@ router
                                 throw `User file folder is not available to store the data`
                             }
                         })
-                        fileHandle.fileEntry(user, filedir, fileSizeInMB, filename)
-                        res.render('MainUserInterface', { user: user, layout: './layouts/MainUserInterface' })
-                        insertIntoAction.insertIntoAction(user, new Date().toISOString(), 'upload', filename)
+                        await fileHandle.fileEntry(user, filedir, fileSizeInMB, filename)
+                        await insertIntoAction.insertIntoAction(user,  new Date().toISOString(), 'upload', filename)
+                        //{ allowedSpace: '10', usedSpace: '0.485477' }
+                        let storageSpace = await usedAndAllowedSpace.getData(req.cookies.userID);
+                        res.render('MainUserInterface', { user: user, storageSpace: storageSpace, layout: './layouts/MainUserInterface' })
                     } else {
                         throw `File is not available to upload`
                     }
@@ -94,7 +98,7 @@ router
 
         let filesArray = []
         const directoryPath = path.join(__dirname, `../public/user-files/${req.cookies.user}`);
-        fs.readdir(directoryPath, function (err, files) {
+        fs.readdir(directoryPath,async function (err, files) {
             //handling error
             if (err) {
                 return console.log('Unable to scan directory: ' + err);
@@ -107,7 +111,8 @@ router
 
             // show files of user
             let user = req.cookies.user
-            res.render('myfiles', { files: filesArray, user: user, layout: './layouts/MainUserInterface' })
+            let storageSpace = await usedAndAllowedSpace.getData(req.cookies.userID);
+            res.render('myfiles', { files: filesArray, storageSpace: storageSpace, user: user, layout: './layouts/MainUserInterface' })
         })
 
     }).get('/myactions', async (req, res) => {
@@ -120,7 +125,8 @@ router
         let UserActions = await getAction.getAction(req.cookies.user);
         console.log(UserActions);
         let user = req.cookies.user
-        res.render('myActions', { user: user, files: UserActions, layout: './layouts/MainUserInterface' })
+        let storageSpace = await usedAndAllowedSpace.getData(req.cookies.userID);
+        res.render('myActions', { user: user, storageSpace: storageSpace, files: UserActions, layout: './layouts/MainUserInterface' })
 
     }).post('/filedownload', async (req, res) => {
 
@@ -151,18 +157,14 @@ router
 
         if (req.cookies.user) {
             let user = req.cookies.user
-
-            let space = `SELECT us.username , (SELECT SUM (uf.filesize) FROM user_files as uf) as SUM, us.space as space 
-            FROM user_storagespace as us 
-            WHERE username = '${req.cookies.user}'
-            `
-            let storageSpace = await DB.executeQuery(space) 
-
-            res.render('MainUserInterface', { user: user, storageSpace: storageSpace[0], layout: './layouts/MainUserInterface' })
+            let storageSpace = await usedAndAllowedSpace.getData(req.cookies.userID);
+            res.render('MainUserInterface', { user: user, storageSpace: storageSpace, layout: './layouts/MainUserInterface' })
         } else {
             res.status(403)
             res.end()
         }
     })
+
+
 
 module.exports = router;
