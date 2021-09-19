@@ -13,6 +13,7 @@ const insertActionsToDB = require('../controllers/insertActionsToDB');
 const currentallowedspace = require('../controllers/Admin/getCurrentAllowedSpace');
 const totalspaceusedbyuser = require('../controllers/Admin/gettotalspaceusedbyuser')
 const usedAndAllowedSpace = require('../controllers/usedSpaceAndAllowedSpace');
+const { getRole } = require('../controllers/getRole');
 
 
 app.use(express.static('public'))
@@ -28,7 +29,7 @@ router
         try {
             let user = req.cookies.user
             let storageSpace = await usedAndAllowedSpace.getData(req.cookies.userID);
-            res.render('uploadFile', { user: user,storageSpace: storageSpace, layout: './layouts/MainUserInterface' })
+            res.render('uploadFile', { user: user, storageSpace: storageSpace, layout: './layouts/MainUserInterface' })
         } catch (error) {
             console.log(error);
             throw error
@@ -69,10 +70,10 @@ router
                             }
                         })
                         await fileHandle.fileEntry(user, filedir, fileSizeInMB, filename)
-                        await insertIntoAction.insertIntoAction(user,  new Date().toISOString(), 'upload', filename)
+                        await insertIntoAction.insertIntoAction(user, new Date().toISOString(), 'upload', filename)
                         //{ allowedSpace: '10', usedSpace: '0.485477' }
                         let storageSpace = await usedAndAllowedSpace.getData(req.cookies.userID);
-                        res.render('MainUserInterface', { user: user, storageSpace: storageSpace, layout: './layouts/MainUserInterface' })
+                        res.redirect(`/file/filemanager/?username=${user}`)
                     } else {
                         throw `File is not available to upload`
                     }
@@ -98,7 +99,7 @@ router
 
         let filesArray = []
         const directoryPath = path.join(__dirname, `../public/user-files/${req.cookies.user}`);
-        fs.readdir(directoryPath,async function (err, files) {
+        fs.readdir(directoryPath, async function (err, files) {
             //handling error
             if (err) {
                 return console.log('Unable to scan directory: ' + err);
@@ -150,21 +151,33 @@ router
             //insert delete action to action table
             insertActionsToDB.insertIntoAction(req.cookies.user, new Date().toISOString(), 'delete', req.body.file)
             res.redirect('/file/myfiles')
-
         }
-
     }).get('/filemanager', async (req, res) => {
 
-        if (req.cookies.user) {
-            let user = req.cookies.user
-            let storageSpace = await usedAndAllowedSpace.getData(req.cookies.userID);
-            res.render('MainUserInterface', { user: user, storageSpace: storageSpace, layout: './layouts/MainUserInterface' })
-        } else {
-            res.status(403)
-            res.end()
+        let role = [];
+
+        try {        
+            let temprole = await getRole(req.cookies.userID);
+            if (temprole) {
+                role = temprole;
+            } 
+        } catch (error) {
+            console.log("error while serving main-user-interface " + error);
+            return;
         }
+        try {
+            if (req.cookies.user) {
+                let user = req.cookies.user
+                let storageSpace = await usedAndAllowedSpace.getData(req.cookies.userID);
+                res.render('MainUserInterface', { role: role, user: user, storageSpace: storageSpace,layout:'./layouts/modular'})
+                // 
+            } else {
+                res.status(403)
+                res.end()
+            }
+        } catch (error) {
+            console.log("error while rendering the main user interface");
+        }      
     })
-
-
 
 module.exports = router;
