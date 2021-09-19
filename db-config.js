@@ -3,21 +3,21 @@ const Path = require('path');
 const _ = require('lodash');
 const Fs = require('graceful-fs');
 
+
 // let dbConfig = {
 //     user: 'postgres',
 //     host: 'localhost',
-//     database: 'test13',
-//     password: 'testPass',
-//     port: 5442,
+//     database: 'file-handler',
+//     password: 'admin',
+//     // port: 5442,
 // }
 
-
 let dbConfig = {
-    user: 'postgres',
-    host: 'localhost',
-    database: 'file-handler',
-    password: 'admin',
-    // port: 5442,
+    user: 'sjayqkttpvnrfr',
+    host: 'ec2-54-158-247-97.compute-1.amazonaws.com',
+    database: 'd4hdvoc940aju',
+    password: 'c9ce6a3a387931e105155b09931f30151d4a10913aac2e096ce2781ff3546c03',
+    port: 5432,
 }
 
 /**
