@@ -1,0 +1,13 @@
+#main{
+
+    display: flex;
+
+}
+
+.role{
+
+}
+
+table, th, td {
+    border:1px solid black;
+  }
