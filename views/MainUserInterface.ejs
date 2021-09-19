@@ -5,75 +5,12 @@
     <meta charset="UTF-8">
     <meta http-equiv="X-UA-Compatible" content="IE=edge">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Files</title>
-
-    <style>
-        .card {
-            border-radius: 5px;
-            padding: 10px;
-            display: block;
-            text-decoration: none;
-            margin: 10px;
-            height: 200px;
-        }
-
-        .flex-box-container{
-            display: flex;
-            justify-content: space-around;
-            
-        }
-        .flex-box-item{
-            width: 500px;
-            margin: 10px;
-            background-color: #9cc3d5ff;
-            border: solid 2px rgb(14, 71, 104);
-          
-
-        }
-        .flex-box-item:hover{
-            background-color: white;
-        }
-        .card-title{
-            font-size: larger;
-            color: black;
-        }
-        .card-text{
-            font-size: larger;
-            color: black;
-        }
-
-
-
-    </style>
-
+    <link rel="stylesheet" href="/css/userModules.css">
 </head>
 
 <body>
-
-    <div class="flex-box-container">
-
-        <div class="flex-box-item flex-box-item1">
-            <a href="/file/upload" class="card">
-                <h5 class="card-title">UPLOAD FILE</h5>
-                <p class="card-text">upload your files here.</p>
-            </a>
-        </div>
-
-        <div class="flex-box-item flex-box-item1">
-            <a href="/file/myfiles" class="card">
-                <h5 class="card-title">MY FILES</h5>
-                <p class="card-text">see you uploaded files, also delete or download them.</p>
-            </a>
-        </div>
-
-        <div class="flex-box-item flex-box-item1">
-            <a href="/file/myactions" class="card">
-                <h5 class="card-title">MY ACTIONS</h5>
-                <p class="card-text">see your files action logs here</p>
-            </a>
-        </div>
-    </div>
-
+    <%- include('./partials/navbar.ejs')%>
+    <%- include('./partials/storageSpace.ejs') %>
 </body>
 
 </html>

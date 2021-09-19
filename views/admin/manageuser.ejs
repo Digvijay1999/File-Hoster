@@ -41,6 +41,7 @@
             <th>status</th>
             <th>profile</th>
             <th>action</th>
+            <th>Manage Role</th>
         </tr>
 
 
@@ -77,6 +78,13 @@
                     <form action="/admin/deleteuser" method="POST">
                         <input style="display: none;" type="text" name="username" value='<%=document.username%>'>
                         <input type="submit" value="delete">
+                    </form>
+                </th>
+                <th>
+                    <form action="/admin/managerole" method="GET">
+                        <!-- <input style="display: none;" type="text" name="username" value='<%=document.username%>'> -->
+                        <input style="display: none;" type="text" name="user_id" value='<%=document.user_id%>'>
+                        <input type="submit" value="Role">
                     </form>
                 </th>
             </tr>
