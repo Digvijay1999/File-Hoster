@@ -5,7 +5,9 @@ const curretAllowedSpace = require('./getCurrentAllowedSpace')
 async function usage() {
 
 
-    let getAllUser = `SELECT uc.user_id, uc.username, (SELECT SUM (filesize) from user_files where username = uc.username  ) as sum,  us.space as space FROM user_credentials uc
+    let getAllUser =
+    `SELECT uc.user_id, uc.username, (SELECT SUM (filesize) from user_files where username = uc.username  ) as sum,  us.space as space 
+    FROM user_credentials uc
     LEFT JOIN user_storagespace as us ON  us.user_id = uc.user_id`
     return await DB.executeQuery(getAllUser)
 
