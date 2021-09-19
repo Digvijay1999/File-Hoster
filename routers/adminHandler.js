@@ -9,12 +9,17 @@ const gettotalspaceusedbyuser = require('../controllers/Admin/gettotalspaceusedb
 const userupdate = require('../controllers/Admin/updateuser');
 const logincred = require('../controllers/loginCredChecker');
 const fileHandle = require('../controllers/UserFileEntryToDB')
-app.use(express.urlencoded({extended:false}))
+const { getRole } = require("../controllers/getRole")
+const roles = require("../controllers/availableRoles");
+const { addRole, removeRole } = require("../controllers/roleUpdater");
+
+app.use(express.urlencoded({ extended: false }))
 const DB = require('../db-config');
 const fs = require('fs');
 
 const path = require('path');
-const usersandfiles = require('../controllers/Admin/getAllUsersFiles')
+const usersandfiles = require('../controllers/Admin/getAllUsersFiles');
+const { userid } = require('../controllers/getuserid');
 
 
 //admin router here i.e. manage user, usage,activities and all
@@ -30,18 +35,18 @@ router
         //if user exists and has access to application
         if (userCred == '1') {
             let user = req.body.username
-            let role = `SELECT role FROM user_information WHERE username = '${user}'`
+            let id = await userid(user);
+            let userRole = await getRole(id);
 
-            let userRole = await DB.executeQuery(role)
-              //if user is admin
-            if (userRole[0].role == 1) {
-                res.cookie('admin',req.body.username.trim())
+            //if user is admin
+            if (userRole.includes(0)) {
+                res.cookie('user', req.body.username.trim());
+                res.cookie('userID', id);
                 res.redirect(`/admin/adminPanel/?user=${req.body.username}`)
 
             } else {
                 let dir = path.join(`${__dirname}`, `../views/admin/adminLogin.ejs`)
                 res.render(dir, { errorTemp: 'adminAccessError', layout: './layouts/layout_with_admin_error' })
-
             }
         } else {
 
@@ -52,7 +57,7 @@ router
 
     .get('/manageuser', async (req, res) => {
 
-        if (!req.cookies.admin) {
+        if (!req.cookies.user) {
             res.status(403)
             res.end()
             return
@@ -60,15 +65,12 @@ router
 
         let dir = path.join(`${__dirname}`, `../views/admin/manageuser.ejs`)
         let AllUsers = await manageuser.users()
-        console.log('all users for manage user = ');
-        for (const key in AllUsers) {
-           console.log(AllUsers[key]);
-        }
-        res.render(dir, { AllUsers: AllUsers, user:req.cookies.admin ,layout:'./layouts/layout_with_navbar_admin.ejs' })
+
+        res.render(dir, { AllUsers: AllUsers, user: req.cookies.user, layout: './layouts/layout_with_navbar_admin.ejs' })
 
     }).post('/updateuser', async (req, res) => {
 
-        if (!req.cookies.admin) {
+        if (!req.cookies.user) {
             res.status(403)
             res.end()
             return
@@ -87,7 +89,7 @@ router
         //update user page
     }).post('/deleteuser', async (req, res) => {
 
-        if (!req.cookies.admin) {
+        if (!req.cookies.user) {
             res.status(403)
             res.end()
             return
@@ -95,7 +97,7 @@ router
 
         let username = req.body.username
 
-        console.log('deleting user ='+ username);
+        console.log('deleting user =' + username);
 
         await deleteuser.deleteuser(username)
         res.redirect('/admin/manageuser')
@@ -103,7 +105,7 @@ router
     })
     .get('/useractivities', async (req, res) => {
 
-        if (!req.cookies.admin) {
+        if (!req.cookies.user) {
             res.status(403)
             res.end()
             return
@@ -111,11 +113,11 @@ router
 
         let useraction = await getuseractions.getAllUser()
         let dir = path.join(`${__dirname}`, `../views/admin/useractivities.ejs`)
-        res.render(dir, { useraction: useraction, user:req.cookies.admin ,layout:'./layouts/layout_with_navbar_admin.ejs'});
+        res.render(dir, { useraction: useraction, user: req.cookies.user, layout: './layouts/layout_with_navbar_admin.ejs' });
 
     }).get('/userStorage', async (req, res) => {
 
-        if (!req.cookies.admin) {
+        if (!req.cookies.user) {
             res.status(403)
             res.end()
             return
@@ -123,10 +125,10 @@ router
 
         let storage = await getalluserusage.usage()
         let dir = path.join(`${__dirname}`, `../views/admin/userStorage.ejs`)
-        res.render(dir, { userUsage: storage, user:req.cookies.admin ,layout:'./layouts/layout_with_navbar_admin.ejs'})
+        res.render(dir, { userUsage: storage, user: req.cookies.user, layout: './layouts/layout_with_navbar_admin.ejs' })
     }).post('/userStorage', async (req, res) => {
 
-        if (!req.cookies.admin) {
+        if (!req.cookies.user) {
             res.status(403)
             res.end()
             return
@@ -155,23 +157,19 @@ router
         }
     }).get('/userfiles', async (req, res) => {
 
-
-        if (!req.cookies.admin) {
+        if (!req.cookies.user) {
             res.status(403)
             res.end()
         } else {
             let userfiles = await usersandfiles.usersandfiles();
-            console.log(userfiles);
 
             let dir = path.join(`${__dirname}`, `../views/admin/userfiles.ejs`)
-            res.render(dir, {user:req.cookies.admin , userfiles ,layout: './layouts/layout_with_navbar_admin.ejs' })
+            res.render(dir, { user: req.cookies.user, userfiles, layout: './layouts/layout_with_navbar_admin.ejs' })
         }
-
 
     }).post('/userfiles', async (req, res) => {
 
-        console.log('cookie for userfiles' + req.cookies.admin);
-        if (!req.cookies.admin) {
+        if (!req.cookies.user) {
             res.status(403)
             res.end()
             return
@@ -189,19 +187,53 @@ router
             await fileHandle.filedelete(req.body.username, deletedir)
             fs.unlinkSync(filepath);
             res.redirect('/admin/userfiles')
-
         }
 
-
-    }).get('/adminPanel',(req,res)=>{
-        if (!req.cookies.admin) {
+    }).get('/adminPanel', (req, res) => {
+        if (!req.cookies.user) {
             res.send(403)
             res.end()
             return
         }
-        console.log(req.cookies.admin);
         let dir = path.join(`${__dirname}`, `../views/admin/adminHomePage.ejs`)
-        res.render(dir,{ user:req.cookies.admin , layout : './layouts/layout_with_navbar_admin.ejs'})
+        res.render(dir, { user: req.cookies.user, layout: './layouts/layout_with_navbar_admin.ejs' })
+    }).get('/managerole', async (req, res) => {
+
+        const roles = {"0":"admin","1":"upload_files", "2":"view_files", "3": "view_activities"};
+
+        let dir = path.join(`${__dirname}`, `../views/admin/managerole.ejs`);
+
+        let role = await getRole(req.query.user_id);
+
+        let finalRoles = [];
+
+        role.forEach(element => {
+            if(element in roles)
+            {
+                finalRoles.push(roles[element]);
+            }
+        });
+   
+        let allRoles = Object.values(roles);
+        let availableRoles = [];
+
+        allRoles.forEach(element => {
+            if (!finalRoles.includes(element)) {
+                availableRoles.push(element)
+            }
+        });
+        res.render(dir, { user: req.cookies.user, User: req.cookies.userID, removeRole: finalRoles, addRole: availableRoles, layout: './layouts/layout_with_navbar_admin.ejs' })
+    }).post('/role', async (req, res) => {
+
+        if (req.body.action == "removerole") {
+            await removeRole(req.body.user_id, req.body.role)
+        }
+
+        if (req.body.action == "addrole") {
+            await addRole(req.body.user_id, req.body.role)
+        }
+
+        res.redirect(`/admin/managerole?user_id=${req.body.user_id}`)
     })
 
 module.exports = router;
