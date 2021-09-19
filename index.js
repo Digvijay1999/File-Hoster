@@ -31,7 +31,12 @@ app.use('/homepage', homepage);
 
 app.use('/file', fileHandler);
 
-app.use('/admin', admin);
+app.use('/admin', admin, (req, res) => {
+
+    if (!req.cookies.user) {
+        return
+    }
+});
 
 app.use('/api', api, (req, res) => {
     if (!req.cookies.user) {
@@ -42,7 +47,7 @@ app.use('/api', api, (req, res) => {
 app.get('/logout', (req, res) => {
     res.clearCookie('userID');
     res.clearCookie('user').redirect('/homepage')
-    
+
 })
 
 app.get('/logout/admin', (req, res) => {
