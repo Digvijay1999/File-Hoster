@@ -27,7 +27,6 @@ async function usersandfiles() {
 
         userandfiles.push(fileNameAndSize)
     }
-    console.log(userandfiles);
     return userandfiles
 }
 
