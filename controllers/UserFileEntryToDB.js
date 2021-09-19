@@ -28,7 +28,6 @@ async function filedelete(user, directory) {
     await DB.executeQuery(deletefile)
 }
 
-
 /**
  *returns the size of the file in MB
  * @param {string} user
@@ -48,6 +47,3 @@ module.exports = {
     filedelete: filedelete,
     getFileSize: getFileSize
 }
-
-
-
