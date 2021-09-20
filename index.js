@@ -24,7 +24,7 @@ app.set('view engine', 'ejs')
 app.use(layouts);
 app.set('layout', './layouts/universal.ejs')
 
-app.listen(8000, () => {
+app.listen(process.env.PORT || 8000, () => {
     console.log('server started at http://localhost:8000');
 })
 
