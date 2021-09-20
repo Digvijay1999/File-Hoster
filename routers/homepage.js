@@ -44,7 +44,7 @@ router
         //login here, create session , sent to next page
         let loginquery = `SELECT username, userpassword,access FROM user_credentials WHERE username = '${req.body.username}' `
         try {
-            let login_credential = await DB.executeQuery(loginquery)
+            var login_credential = await DB.executeQuery(loginquery)
         } catch (error) {
             console.log("error while retrieving info from user_credentials table(database error)");
         }
