@@ -32,6 +32,7 @@ let dbConfig = {
  */
 async function executeQuery(query, values) {
     let client = await connectDB()
+    client.end();
     let result = await client.query(query, values);
     let res = result.rows;
     return res;
@@ -52,7 +53,7 @@ async function connectDB() {
         return client;
 
     } catch (error) {
-        console.log("could not find database");
+        console.log("could not find database at first attempt");
         if (error.code === '3D000') {
             try {
                 console.log(`database "${dbConfig.database}" does not exist`);
