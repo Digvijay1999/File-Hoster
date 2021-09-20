@@ -138,9 +138,9 @@
             }
         }
 
-        xrh.open('GET', `http://localhost:8000/api/userCheck?username=${username}&email=${email}`, true)
+        // xrh.open('GET', `http://localhost:8000/api/userCheck?username=${username}&email=${email}`, true)
+        xrh.open('GET', `http://filehosternode.herokuapp.com/api/userCheck?username=${username}&email=${email}`, true)
         xrh.send();
-
 
     }
 
