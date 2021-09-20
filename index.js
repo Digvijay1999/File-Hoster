@@ -11,6 +11,8 @@ const cookieparser = require('cookie-parser')
 const upload = require('express-fileupload')
 const DB = require('./db-config');
 const path = require('path');
+
+
 app.use(upload());
 app.use(cookieparser());
 app.use(express.urlencoded({ extended: false }));
@@ -26,6 +28,9 @@ app.listen(8000, () => {
     console.log('server started at http://localhost:8000');
 })
 
+app.get('/',(req,res)=>{
+    res.redirect('/homepage')
+})
 //routings start from here....
 app.use('/homepage', homepage);
 
