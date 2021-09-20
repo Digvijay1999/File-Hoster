@@ -13,7 +13,7 @@ CREATE TABLE IF NOT EXISTS user_information (
     email varchar(128) UNIQUE,
     age smallint DEFAULT 0,
     gender varchar(6),
-    role smallint,
+    role JSONB,
     FOREIGN KEY (user_id) REFERENCES user_credentials(user_id) ON DELETE CASCADE
 );
 

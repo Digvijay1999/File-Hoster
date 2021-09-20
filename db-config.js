@@ -31,17 +31,12 @@ let dbConfig = {
  * @return {Array} 
  */
 async function executeQuery(query, values) {
-    console.log("execute query called");
     let client = await connectDB()
-    console.log("going to execute query");
     let result = await client.query(query, values);
-    console.log(result['rows']);
-    return result['rows'];
+    let res = result.rows;
+    return res;
 }
 
-let q = "SELECT * FROM user_credentials"
-
-executeQuery(q)
 
 /**
  *this function checks if db exists or not if not exits then creates one and makes the connection with db 
