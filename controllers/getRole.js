@@ -2,6 +2,8 @@ const DB = require('../db-config');
 
 async function getRole(user_id) {
 
+    console.log('get role called');
+
     let q = `SELECT role->'role' as role FROM user_information WHERE user_id = '${user_id}'`;
     let role = await DB.executeQuery(q);
     if (!role[0]) {
@@ -11,8 +13,6 @@ async function getRole(user_id) {
         return role[0].role
     }
 }
-
-getRole("54")
 
 module.exports = {
     getRole

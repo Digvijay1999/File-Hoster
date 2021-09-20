@@ -20,8 +20,6 @@ async function totalusedspace(user_id) {
     return sum[0].sum;
 }
 
-totalusedspace(40);
-
 module.exports = {
     totalusedspace
 }

@@ -31,6 +31,7 @@ let dbConfig = {
  * @return {Array} 
  */
 async function executeQuery(query, values) {
+    console.log("execute query called");
     let client = await connectDB()
     let result = await client.query(query, values);
     return result['rows'];
@@ -46,10 +47,11 @@ async function connectDB() {
         let client = new Client(dbConfig)
         await client.connect().then(()=>{
             console.log("database connection was successful");
+            return client;
         });
-        return client;
 
     } catch (error) {
+        console.log("could not find database");
         if (error.code === '3D000') {
             try {
                 console.log(`database "${dbConfig.database}" does not exist`);
@@ -80,6 +82,8 @@ async function connectDB() {
 }
 
 async function importDBSchema(client) {
+
+
     try {
         let sqlFilePath = Path.join(__dirname, './dbschema', 'file_handler.pgsql');
         let sqlQueriesString = await Fs.readFileSync(sqlFilePath, 'utf-8');

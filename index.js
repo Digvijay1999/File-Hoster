@@ -9,7 +9,7 @@ const admin = require('./routers/adminHandler')
 const layouts = require('express-ejs-layouts')
 const cookieparser = require('cookie-parser')
 const upload = require('express-fileupload')
-const DB = require('./db-config');
+// const DB = require('./db-config');
 const path = require('path');
 
 
