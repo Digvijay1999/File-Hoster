@@ -43,12 +43,16 @@ router
         }
         //login here, create session , sent to next page
         let loginquery = `SELECT username, userpassword,access FROM user_credentials WHERE username = '${req.body.username}' `
-        let login_credential = await DB.executeQuery(loginquery)
-       
+        try {
+            let login_credential = await DB.executeQuery(loginquery)
+        } catch (error) {
+            console.log("error while retrieving info from user_credentials table(database error)");
+        }
+
         if (login_credential[0].access) {
             //check if user have access or not if does then login if not then redirect to login page
             if (login_credential.length && login_credential[0].userpassword == req.body.userpassword) {
-               const userID = await getID.userid(req.body.username);
+                const userID = await getID.userid(req.body.username);
                 res.cookie('user', `${login_credential[0].username}`)
                 res.cookie('userID', `${userID}`);
                 // res.render('MainUserInterface', { layout: './layouts/MainUserInterface' })
@@ -58,5 +62,5 @@ router
             res.sent(`oops, you don't have access to this page sorry`)
         }
     })
-    
+
 module.exports = router;

@@ -7,7 +7,11 @@ async function checker(reqBody) {
     let accessCheck = `SELECT access FROM user_credentials WHERE username = '${reqBody.username}'`
     let checkUsernamePassword = `SELECT userpassword FROM user_credentials WHERE username = '${reqBody.username}'`
 
-    let result = await DB.executeQuery(userExits);
+    try {
+        let result = await DB.executeQuery(userExits);
+    } catch (error) {
+        console.log("error while connecting to the db at loginCredChecker");
+    }
 
     //first check if user exists the proceed else return 
     if (result.length) {

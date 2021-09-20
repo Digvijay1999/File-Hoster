@@ -7,10 +7,13 @@ const fs = require('fs')
  * @return {number} user_id created into database
  */
 async function createUser(payload) {
-
+try {    
     let createUser = `INSERT INTO user_credentials (username,userpassword,access) 
     VALUES ('${payload.username.trim()}','${payload.userpassword}','true');`
     await DB.executeQuery(createUser);
+} catch (error) {
+    console.log("could not connect to database");
+}
 
     try {
         let getuserid = `SELECT user_id FROM user_credentials WHERE username = '${payload.username.trim()}'`;
