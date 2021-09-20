@@ -33,9 +33,15 @@ let dbConfig = {
 async function executeQuery(query, values) {
     console.log("execute query called");
     let client = await connectDB()
+    console.log("going to execute query");
     let result = await client.query(query, values);
+    console.log(result['rows']);
     return result['rows'];
 }
+
+let q = "SELECT * FROM user_credentials"
+
+executeQuery(q)
 
 /**
  *this function checks if db exists or not if not exits then creates one and makes the connection with db 
@@ -47,8 +53,8 @@ async function connectDB() {
         let client = new Client(dbConfig)
         await client.connect().then(()=>{
             console.log("database connection was successful");
-            return client;
         });
+        return client;
 
     } catch (error) {
         console.log("could not find database");
