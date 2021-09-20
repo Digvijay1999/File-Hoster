@@ -19,9 +19,7 @@ let dbConfig = {
     database: 'd4hdvoc940aju',
     password: 'c9ce6a3a387931e105155b09931f30151d4a10913aac2e096ce2781ff3546c03',
     port: 5432,
-    ssl: {
-        rejectUnauthorized: false
-    },
+    ssl: {rejectUnauthorized: false},
     URL: "postgres://sjayqkttpvnrfr:c9ce6a3a387931e105155b09931f30151d4a10913aac2e096ce2781ff3546c03@ec2-54-158-247-97.compute-1.amazonaws.com:5432/d4hdvoc940aju"
 }
 
@@ -46,7 +44,9 @@ async function executeQuery(query, values) {
 async function connectDB() {
     try {
         let client = new Client(dbConfig)
-        await client.connect();
+        await client.connect().then(()=>{
+            console.log("database connection was successful");
+        });
         return client;
 
     } catch (error) {
@@ -63,7 +63,11 @@ async function connectDB() {
                 await tempClient.query(`CREATE DATABASE "${dbConfig.database}"`);
                 console.log(`Database created.`);
                 tempClient = new Client(dbConfig);
-                await tempClient.connect()
+                await tempClient.connect().then(()=>{
+                    console.log("database connection was successful");
+                }).catch((error)=>{
+                    console.log("error occurred while connecting to the database "+error);
+                })
                 await importDBSchema(tempClient);
                 return tempClient;
             } catch (error) {
