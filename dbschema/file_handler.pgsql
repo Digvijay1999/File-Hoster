@@ -44,4 +44,4 @@ CREATE TABLE IF NOT EXISTS user_role(
     role_id SMALLINT,
     role VARCHAR(30),
     PRIMARY KEY (role_id)
-)
+);
