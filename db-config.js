@@ -32,8 +32,8 @@ let dbConfig = {
  */
 async function executeQuery(query, values) {
     let client = await connectDB()
-    client.end();
     let result = await client.query(query, values);
+    client.end();
     let res = result.rows;
     return res;
 }
