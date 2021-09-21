@@ -7,6 +7,7 @@ const userSignUp = require('../validator/userForm');
 const getID = require('../controllers/getuserid');
 const DB = require('../db-config');
 const fs = require('fs');
+const path = require('path');
 
 app.use(express.static('public'))
 
@@ -32,8 +33,14 @@ router
         let user_id = await createuser.createUser(req.body)
         res.cookie('userID', `${user_id}`)
         res.cookie('user', `${req.body.username.trim()}`)
-        var dir = `./public/user-files/${req.body.username}`;
-        await fs.mkdirSync(dir);
+
+        const dir = path.join(__dirname, `./public/user-files/digu`);
+
+        if (!fs.existsSync(dir)){
+            console.log("creating dir");
+            fs.mkdirSync(dir, { recursive: true });
+        }
+
         res.redirect(`/file/filemanager/?username=${req.body.username}`)
         
         console.log('user created');
