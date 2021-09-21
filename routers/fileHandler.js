@@ -45,12 +45,6 @@ router
             }
             console.log(`Attempting to upload user = ` + req.cookies.user);
 
-            console.log(typeof req.files);
-
-            if(req.files){
-                res.end();
-            }
-
             var file = req.files.file
             let fileSizeInMB = file.size / 1000000
             let user_id = req.cookies.userID
@@ -73,7 +67,7 @@ router
                         }
 
                         // let filedir = `../public/user-files/${user}/${filename}`
-                        const filedir = path.join(__dirname, `../`,`public/user-files/${user}`, `${filename}`);
+                        const filedir = path.join(__dirname, `../`, `public/user-files/${user}`, `${filename}`);
 
                         console.log("path to move file is " + filedir);
 
@@ -164,7 +158,7 @@ router
         } else if (req.body.action == 'delete') {
             let deleteFilePath = `./public/user-files/${req.cookies.user}/${req.body.file}`
 
-            try {     
+            try {
                 await fileHandle.filedelete(req.cookies.user, deleteFilePath)
                 fs.unlinkSync(filepath);
             } catch (error) {
