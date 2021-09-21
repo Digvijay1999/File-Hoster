@@ -48,7 +48,6 @@ async function connectDB() {
     try {
         let client = new Client(dbConfig)
         await client.connect().then(()=>{
-            console.log("database connection was successful");
         });
         return client;
 
