@@ -44,6 +44,11 @@ router
                 throw 'User session is not configured.'
             }
             console.log(`Attempting to upload user = ` + req.cookies.user);
+
+            if(req.files){
+                res.end();
+            }
+
             var file = req.files.file
             let fileSizeInMB = file.size / 1000000
             let user_id = req.cookies.userID
