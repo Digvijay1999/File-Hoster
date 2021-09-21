@@ -43,7 +43,7 @@ router
             if (!req.cookies) {
                 throw 'User session is not configured.'
             }
-            console.log(`Attempting to upload the ` + req.cookies.user);
+            console.log(`Attempting to upload user = ` + req.cookies.user);
             var file = req.files.file
             let fileSizeInMB = file.size / 1000000
             let user_id = req.cookies.userID
@@ -55,17 +55,32 @@ router
                     if (req.files) {
                         var filename = file.name
                         let user = req.cookies.user;
-                        var dir = `./public/user-files/${user}`;
+                        console.log("current directory for fileHandler is " + __dirname);
+
+                        //current directory for fileHandler is C:\Users\diguy\Desktop\git\file-handler\routers
+                        const dir = path.join(__dirname, `../public/user-files/${user}`);
+
                         if (!fs.existsSync(dir)) {
-                            await fs.mkdirSync(dir)
+                            console.log("creating dir");
+                            await fs.mkdirSync(dir, { recursive: true });
                         }
-                        filedir = `./public/user-files/${user}/${filename}`
-                        await file.mv(filedir, (error) => {
-                            if (error) {
-                                res.end('file could not be created please try again')
-                                throw `User file folder is not available to store the data`
-                            }
-                        })
+
+                        // let filedir = `../public/user-files/${user}/${filename}`
+                        const filedir = path.join(__dirname, `../`,`public/user-files/${user}`, `${filename}`);
+
+                        console.log("path to move file is " + filedir);
+
+                        try {
+                            await file.mv(filedir, (error) => {
+                                if (error) {
+                                    res.end('file could not be created please try again')
+                                    throw "error occurred while moving file to users folder "
+                                }
+                            })
+                        } catch (error) {
+                            console.log(error);
+                        }
+
                         await fileHandle.fileEntry(user, filedir, fileSizeInMB, filename)
                         await insertIntoAction.insertIntoAction(user, new Date().toISOString(), 'upload', filename)
                         //{ allowedSpace: '10', usedSpace: '0.485477' }
@@ -142,8 +157,12 @@ router
         } else if (req.body.action == 'delete') {
             let deleteFilePath = `./public/user-files/${req.cookies.user}/${req.body.file}`
 
-            await fileHandle.filedelete(req.cookies.user, deleteFilePath)
-            fs.unlinkSync(filepath);
+            try {     
+                await fileHandle.filedelete(req.cookies.user, deleteFilePath)
+                fs.unlinkSync(filepath);
+            } catch (error) {
+                console.log("file was not present in directory while deleting the file");
+            }
 
             //insert delete action to action table
             insertActionsToDB.insertIntoAction(req.cookies.user, new Date().toISOString(), 'delete', req.body.file)
