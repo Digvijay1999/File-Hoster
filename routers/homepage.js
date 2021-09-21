@@ -6,6 +6,8 @@ const loginCredentials = require('../validator/userLogin');
 const userSignUp = require('../validator/userForm');
 const getID = require('../controllers/getuserid');
 const DB = require('../db-config');
+const fs = require('fs');
+
 app.use(express.static('public'))
 
 
@@ -30,7 +32,10 @@ router
         let user_id = await createuser.createUser(req.body)
         res.cookie('userID', `${user_id}`)
         res.cookie('user', `${req.body.username.trim()}`)
+        var dir = `./public/user-files/${req.body.username}`;
+        await fs.mkdirSync(dir);
         res.redirect(`/file/filemanager/?username=${req.body.username}`)
+        
         console.log('user created');
 
     })

@@ -15,9 +15,7 @@ const totalspaceusedbyuser = require('../controllers/Admin/gettotalspaceusedbyus
 const usedAndAllowedSpace = require('../controllers/usedSpaceAndAllowedSpace');
 const { getRole } = require('../controllers/getRole');
 
-
 app.use(express.static('public'))
-
 
 router
     .get('/upload', async (req, res) => {
@@ -58,9 +56,8 @@ router
                         var filename = file.name
                         let user = req.cookies.user;
                         var dir = `./public/user-files/${user}`;
-                        console.log(dir);
                         if (!fs.existsSync(dir)) {
-                            fs.mkdirSync(dir)
+                            await fs.mkdirSync(dir)
                         }
                         filedir = `./public/user-files/${user}/${filename}`
                         await file.mv(filedir, (error) => {
@@ -156,11 +153,11 @@ router
 
         let role = [];
 
-        try {        
+        try {
             let temprole = await getRole(req.cookies.userID);
             if (temprole) {
                 role = temprole;
-            } 
+            }
         } catch (error) {
             console.log("error while serving main-user-interface " + error);
             return;
@@ -169,7 +166,7 @@ router
             if (req.cookies.user) {
                 let user = req.cookies.user
                 let storageSpace = await usedAndAllowedSpace.getData(req.cookies.userID);
-                res.render('MainUserInterface', { role: role, user: user, storageSpace: storageSpace,layout:'./layouts/modular'})
+                res.render('MainUserInterface', { role: role, user: user, storageSpace: storageSpace, layout: './layouts/modular' })
                 // 
             } else {
                 res.status(403)
@@ -177,7 +174,7 @@ router
             }
         } catch (error) {
             console.log("error while rendering the main user interface");
-        }      
+        }
     })
 
 module.exports = router;
