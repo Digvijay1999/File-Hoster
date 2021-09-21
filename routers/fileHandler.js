@@ -45,7 +45,7 @@ router
             }
             console.log(`Attempting to upload user = ` + req.cookies.user);
 
-            if(req.files){
+            if(!req.files){
                 res.end();
             }
 
