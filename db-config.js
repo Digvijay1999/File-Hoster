@@ -14,13 +14,12 @@ const { off } = require('process');
 // }
 
 let dbConfig = {
-    user: 'sjayqkttpvnrfr',
-    host: 'ec2-54-158-247-97.compute-1.amazonaws.com',
-    database: 'd4hdvoc940aju',
-    password: 'c9ce6a3a387931e105155b09931f30151d4a10913aac2e096ce2781ff3546c03',
+    user: process.env.HEROKU_USER,
+    host: process.env.HEROKU_HOST,
+    database:process.env.HEROKU_DB,
+    password: process.env.HEROKU_PASSWORD,
     port: 5432,
     ssl: {rejectUnauthorized: false},
-    URL: "postgres://sjayqkttpvnrfr:c9ce6a3a387931e105155b09931f30151d4a10913aac2e096ce2781ff3546c03@ec2-54-158-247-97.compute-1.amazonaws.com:5432/d4hdvoc940aju"
 }
 
 /**
