@@ -156,9 +156,12 @@ router
             insertActionsToDB.insertIntoAction(req.cookies.user, new Date().toISOString(), 'download', req.body.file)
 
         } else if (req.body.action == 'delete') {
-            let deleteFilePath = `./public/user-files/${req.cookies.user}/${req.body.file}`
+            // let deleteFilePath =  `./public/user-files/${req.cookies.user}/${req.body.file}`;
+
+            let deleteFilePath = path.join(__dirname, `../public/user-files/${req.cookies.user}/${req.body.file}`);
 
             try {
+                console.log("deleting the file");
                 await fileHandle.filedelete(req.cookies.user, deleteFilePath)
                 fs.unlinkSync(filepath);
             } catch (error) {

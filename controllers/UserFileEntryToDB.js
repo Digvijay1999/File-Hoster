@@ -23,6 +23,10 @@ async function fileEntry(user, directory, filesize, filename) {
  */
 async function filedelete(user, directory) {
     //deletes the file entry from the table
+    console.log("PATH IN DATABASE FOR DELETING FILE IS ");
+    console.log(directory);
+    console.log("USER TO DELETE FILE IS");
+    console.log(user);
     let deletefile = `DELETE FROM user_files 
     WHERE username = '${user}' AND directory = '${directory}';`
     await DB.executeQuery(deletefile)
