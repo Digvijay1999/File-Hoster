@@ -51,54 +51,48 @@ router
             let totalspaceused = Number(await totalspaceusedbyuser.totalusedspace(user_id))
             let allowedSpace = Number(await currentallowedspace.getAllowedSpace(user_id))
             let spaceLeft = allowedSpace - totalspaceused;
+
             if (totalspaceused < allowedSpace) {
                 if (fileSizeInMB < spaceLeft) {
                     if (req.files) {
                         var filename = file.name
                         let user = req.cookies.user;
-                        console.log("current directory for fileHandler is " + __dirname);
 
                         //current directory for fileHandler is C:\Users\diguy\Desktop\git\file-handler\routers
                         const dir = path.join(__dirname, `../public/user-files/${user}`);
 
                         if (!fs.existsSync(dir)) {
-                            console.log("creating dir");
                             await fs.mkdirSync(dir, { recursive: true });
                         }
 
-                        // let filedir = `../public/user-files/${user}/${filename}`
                         const filedir = path.join(__dirname, `../`, `public/user-files/${user}`, `${filename}`);
-
-                        console.log("path to move file is " + filedir);
 
                         try {
                             await file.mv(filedir, (error) => {
                                 if (error) {
-                                    res.end('file could not be created please try again')
-                                    throw "error occurred while moving file to users folder "
+                                    throw "error occurred while moving file to users folder ";
                                 }
                             })
                         } catch (error) {
-                            console.log(error);
+                            res.end("error occurred while storing file please try again");
+                            console.log("error while files was uploading");
                         }
-
                         await fileHandle.fileEntry(user, filedir, fileSizeInMB, filename)
                         await insertIntoAction.insertIntoAction(user, new Date().toISOString(), 'upload', filename)
-                        //{ allowedSpace: '10', usedSpace: '0.485477' }
-                        let storageSpace = await usedAndAllowedSpace.getData(req.cookies.userID);
+
                         res.redirect(`/file/filemanager/?username=${user}`)
                     } else {
-                        throw `File is not available to upload`
+                        throw `File is not available to upload`;
                     }
                 } else if (fileSizeInMB > spaceLeft) {
-                    throw ` User don't have enough space to upload this file. Please contact to you admin for space.`
+                    throw ` User don't have enough space to upload this file. Please contact to you admin for space.`;
                 }
 
             } else {
-                throw ` User don't have enough space to upload this file. Please contact to you admin for space.`
+                throw ` User don't have enough space to upload this file. Please contact to you admin for space.`;
             }
         } catch (error) {
-            console.log(error);
+            console.log("error occurred while file was being uploaded " + error);
             res.end(error)
         }
 
