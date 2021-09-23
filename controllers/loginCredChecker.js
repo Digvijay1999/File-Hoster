@@ -12,11 +12,11 @@ async function checker(reqBody) {
     try {
          result = await DB.executeQuery(userExits);
     } catch (error) {
-        console.log("error while connecting to the db at loginCredChecker");
+        console.log("connection to database failed, at loginCredChecker");
+        return;
     }
 
     //first check if user exists the proceed else return 
-
     if (result.length) {
         //check if user have access if not then return else proceed
         let result = await DB.executeQuery(accessCheck)

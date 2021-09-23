@@ -11,12 +11,15 @@ router.get('/userCheck', async (req, res) => {
 })
 
 router.post('/loginCheck', async (req, res) => {
-    let result = await loginCreds.checker(req.body)
+    try {
+        let result = await loginCreds.checker(req.body)
+    } catch (error) {
+        res.end("something went wrong, please try again !")
+    }
     if (result) {
-     res.send(result)
+        res.send(result)
     }
 })
-
 
 module.exports = router
 
