@@ -30,7 +30,13 @@ router
             return
         }
         //create new user and gets the user id for session creation
-        let user_id = await createuser.createUser(req.body)
+        try {
+            let user_id = await createuser.createUser(req.body)
+        } catch (error) {
+            console.log(error);
+            res.end("error occurred")
+            return;
+        }
         res.cookie('userID', `${user_id}`)
         res.cookie('user', `${req.body.username.trim()}`)
 
@@ -42,7 +48,7 @@ router
         }
 
         res.redirect(`/file/filemanager/?username=${req.body.username}`)
-        
+
         console.log('user created');
 
     })

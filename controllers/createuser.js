@@ -31,6 +31,7 @@ try {
         await DB.executeQuery(insertUserInfo);
     } catch (error) {
         console.log("error while inserting user info"+error);
+        throw "user information could not be entered"
     }
   
 
