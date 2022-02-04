@@ -9,7 +9,7 @@ let dbConfig = {
     host: process.env.HEROKU_HOST,
     database: process.env.HEROKU_DB,
     password: process.env.HEROKU_PASSWORD,
-    port: 5432,
+    port: "5432",
     ssl: { rejectUnauthorized: false },
 }
 
