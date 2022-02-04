@@ -42,7 +42,7 @@ router
 
         const dir = path.join(__dirname, `./public/user-files/digu`);
 
-        if (!fs.existsSync(dir)){
+        if (!fs.existsSync(dir)) {
             console.log("creating dir");
             fs.mkdirSync(dir, { recursive: true });
         }
@@ -53,6 +53,9 @@ router
 
     })
     .post('/login', async (req, res) => {
+
+        console.log("login page hit");
+
         let result = await loginCredentials.validateLoginDetails(req.body)
 
         if (result.error) {

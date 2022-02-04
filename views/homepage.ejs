@@ -6,7 +6,7 @@
     <meta http-equiv="X-UA-Compatible" content="IE=edge">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Home</title>
-    <link href="https://unpkg.com/tailwindcss@^2/dist/tailwind.min.css" rel="stylesheet">       
+    <link href="https://unpkg.com/tailwindcss@^2/dist/tailwind.min.css" rel="stylesheet">
 </head>
 
 <body style="background-color: lightcyan;">
@@ -59,8 +59,9 @@
                 </div>
             </form>
             <div style="margin-top: 20px; display: flex;">
-                New user ? <br> <a class="links" style="color: blue;" href="/homepage/register"> register here </a> </p> <span
-                    style="margin-left: 4.5cm;"> <a class="links" style="color: blue;"  href="/admin/login"> Login as Admin </a> </span>
+                New user ? <br> <a class="links" style="color: blue;" href="/homepage/register"> register here </a> </p>
+                <span style="margin-left: 4.5cm;"> <a class="links" style="color: blue;" href="/admin/login"> Login as
+                        Admin </a> </span>
             </div>
 
 
@@ -80,7 +81,7 @@
 
         xhr.onload = function () {
             // // document.getElementById('errormessage')
-            
+
             if (this.response == '1') {
                 document.getElementById('mainform').submit();
             } else if (this.responseText == 'nouser') {
@@ -98,8 +99,8 @@
         }
 
 
-        xhr.open('POST', 'http://filehosternode.herokuapp.com/api/loginCheck', true);
-        //xhr.open('POST', 'http://localhost:8000/api/loginCheck', true);
+        // xhr.open('POST', 'http://filehosternode.herokuapp.com/api/loginCheck', true);
+        xhr.open('POST', 'http://localhost:8000/api/loginCheck', true);
         xhr.setRequestHeader("Content-type", "application/x-www-form-urlencoded");
         xhr.send(`username=${username}&password=${password}`)
 
