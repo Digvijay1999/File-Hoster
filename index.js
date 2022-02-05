@@ -27,10 +27,14 @@ app.use(layouts);
 app.set('layout', './layouts/universal.ejs')
 
 app.listen(process.env.PORT || 8000, () => {
-    console.log('server started at http://localhost:8000');
+    if (process.env.PORT) {
+        console.log("server started on heroku");
+    } else {
+        console.log('server started at http://localhost:8000');
+    }
 })
 
-app.get('/',(req,res)=>{
+app.get('/', (req, res) => {
     res.redirect('/homepage')
 })
 //routings start from here....
