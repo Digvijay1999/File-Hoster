@@ -9,6 +9,7 @@ router.post('/userCheck', async (req, res) => {
     console.log("api request for register page");
     let result = await CheckUserInDB.checker(req.body)
     res.json(result);
+    res.end
 })
 
 router.post('/loginCheck', async (req, res) => {
@@ -17,6 +18,7 @@ router.post('/loginCheck', async (req, res) => {
         let result = await loginCreds.checker(req.body)
         if (result) {
             res.send(result)
+            res.end
         }
     } catch (error) {
         res.end("something went wrong, please try again !")
