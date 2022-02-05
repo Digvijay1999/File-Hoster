@@ -14,7 +14,7 @@ async function deleteuser(user) {
         console.log('error inside deletefrom user-cred');
     }
     const filepath = path.join(__dirname, `../../public/user-files/${user}`);
-    fs.rmdirSync(filepath, { recursive: true });
+    fs.rmSync(filepath, { recursive: true });
 
     try {
         let deleteAction = `DELETE FROM userfiles_actions WHERE username = '${user}'`
