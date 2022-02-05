@@ -5,12 +5,14 @@ const CheckUserInDB = require('../controllers/userAndEmailChecker')
 const loginCreds = require('../controllers/loginCredChecker')
 app.use(express.urlencoded({ extended: false }));
 
-router.get('/userCheck', async (req, res) => {
-    let result = await CheckUserInDB.checker(req.query)
+router.post('/userCheck', async (req, res) => {
+    console.log("api request for register page");
+    let result = await CheckUserInDB.checker(req.body)
     res.json(result);
 })
 
 router.post('/loginCheck', async (req, res) => {
+    console.log("api call for login page for " + req.body.username);
     try {
         let result = await loginCreds.checker(req.body)
         if (result) {
