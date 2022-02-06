@@ -11,14 +11,17 @@
   "author": "digvijay",
   "license": "ISC",
   "dependencies": {
+    "connect-redis": "^6.1.0",
     "cookie-parser": "^1.4.5",
     "ejs": "^3.1.6",
     "express": "^4.17.1",
     "express-ejs-layouts": "^2.5.1",
     "express-fileupload": "^1.2.1",
+    "express-session": "^1.17.2",
     "graceful-fs": "^4.2.8",
     "joi": "^17.4.2",
     "lodash": "^4.17.21",
-    "pg": "^8.6.0"
+    "pg": "^8.6.0",
+    "redis": "^4.0.3"
   }
 }
