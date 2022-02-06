@@ -9,9 +9,8 @@ const admin = require('./routers/adminHandler')
 const layouts = require('express-ejs-layouts')
 const cookieparser = require('cookie-parser')
 const upload = require('express-fileupload')
-// const DB = require('./db-config');
+const DB = require('./db-config');
 const path = require('path');
-
 
 app.use(upload());
 app.use(cookieparser());
@@ -25,10 +24,14 @@ app.use(layouts);
 app.set('layout', './layouts/universal.ejs')
 
 app.listen(process.env.PORT || 8000, () => {
-    console.log('server started at http://localhost:8000');
+    if (process.env.PORT) {
+        console.log("server started on heroku");
+    } else {
+        console.log('server started at http://localhost:8000');
+    }
 })
 
-app.get('/',(req,res)=>{
+app.get('/', (req, res) => {
     res.redirect('/homepage')
 })
 //routings start from here....
