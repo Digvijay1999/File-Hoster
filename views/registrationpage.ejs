@@ -138,7 +138,7 @@
                 }
             }
         }
-        xrh.open('POST', `http://filehosternode.herokuapp.com/api/userCheck`, true)
+        xrh.open('POST', `https://filehosternode.herokuapp.com/api/userCheck`, true)
         xrh.setRequestHeader('Content-type', 'application/x-www-form-urlencoded');
         xrh.send(`username=${username}&email=${email}`);
     }
