@@ -13,6 +13,7 @@ const DB = require('./db-config');
 const path = require('path');
 const session = require('express-session');
 const redis = require('redis');
+const cors = require('cors');
 
 
 app.use(upload());
@@ -49,7 +50,7 @@ app.use('/admin', admin, (req, res) => {
     }
 });
 
-app.use('/api', api, (req, res) => {
+app.use('/api', cors(), api, (req, res) => {
     if (!req.cookies.user) {
         return
     }
