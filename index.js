@@ -46,7 +46,7 @@ app.use('/admin', admin, (req, res) => {
     }
 });
 
-app.use('/api', cors(), api, (req, res) => {
+app.use('/api', api, (req, res) => {
     if (!req.cookies.user) {
         return
     }
