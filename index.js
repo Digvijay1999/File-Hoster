@@ -11,10 +11,6 @@ const cookieparser = require('cookie-parser')
 const upload = require('express-fileupload')
 const DB = require('./db-config');
 const path = require('path');
-const session = require('express-session');
-const redis = require('redis');
-const cors = require('cors');
-
 
 app.use(upload());
 app.use(cookieparser());
