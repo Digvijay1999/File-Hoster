@@ -15,9 +15,35 @@ const totalspaceusedbyuser = require('../controllers/Admin/gettotalspaceusedbyus
 const usedAndAllowedSpace = require('../controllers/usedSpaceAndAllowedSpace');
 const { getRole } = require('../controllers/getRole');
 
+//session
+const session = require('express-session');
+let RedisStore = require("connect-redis")(session)
+
+const { createClient } = require("redis")
+let redisClient = createClient({
+    port: process.env.HEROKU_REDISPORT,
+    host: process.env.HEROKU_REDISHOST,
+})
+redisClient.connect().catch(console.error);
+
 app.use(express.static('public'))
 
-router
+router.use(
+    session({
+        store: new RedisStore({ client: redisClient }),
+        saveUninitialized: false,
+        secret: "keyboard cat",
+        resave: false,
+    }))
+    .use((req, res, next) => {
+        if (!req.session || !req.session.username || req.session.username != req.cookies.user || req.session.userID != req.cookies.userID) {
+            // const err = new Error('You shall not pass');
+            // err.statusCode = 401;
+            res.end("unauthorized access!! please login")
+            return;
+        }
+        next();
+    })
     .get('/upload', async (req, res) => {
         if (!req.cookies.user) {
             res.status(403)
@@ -166,32 +192,35 @@ router
             insertActionsToDB.insertIntoAction(req.cookies.user, new Date().toISOString(), 'delete', req.body.file)
             res.redirect('/file/myfiles')
         }
-    }).get('/filemanager', async (req, res) => {
-
-        let role = [];
-
-        try {
-            let temprole = await getRole(req.cookies.userID);
-            if (temprole) {
-                role = temprole;
-            }
-        } catch (error) {
-            console.log("error while serving main-user-interface " + error);
-            return;
-        }
-        try {
-            if (req.cookies.user) {
-                let user = req.cookies.user
-                let storageSpace = await usedAndAllowedSpace.getData(req.cookies.userID);
-                res.render('MainUserInterface', { role: role, user: user, storageSpace: storageSpace, layout: './layouts/modular' })
-                // 
-            } else {
-                res.status(403)
-                res.end()
-            }
-        } catch (error) {
-            console.log("error while rendering the main user interface");
-        }
     })
+
+
+router.get('/filemanager', async (req, res) => {
+
+    let role = [];
+
+    try {
+        let temprole = await getRole(req.cookies.userID);
+        if (temprole) {
+            role = temprole;
+        }
+    } catch (error) {
+        console.log("error while serving main-user-interface " + error);
+        return;
+    }
+    try {
+        if (req.cookies.user) {
+            let user = req.cookies.user
+            let storageSpace = await usedAndAllowedSpace.getData(req.cookies.userID);
+            res.render('MainUserInterface', { role: role, user: user, storageSpace: storageSpace, layout: './layouts/modular' })
+            // 
+        } else {
+            res.status(403)
+            res.end()
+        }
+    } catch (error) {
+        console.log("error while rendering the main user interface");
+    }
+})
 
 module.exports = router;
