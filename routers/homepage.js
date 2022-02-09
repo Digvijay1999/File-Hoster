@@ -8,11 +8,29 @@ const getID = require('../controllers/getuserid');
 const DB = require('../db-config');
 const fs = require('fs');
 const path = require('path');
+//session
+const session = require("express-session")
+let RedisStore = require("connect-redis")(session)
+
+const { createClient } = require("redis")
+let redisClient = createClient({
+    port:process.env.HEROKU_REDISPORT,
+    host:process.env.HEROKU_REDISHOST,
+})
+redisClient.connect().catch(console.error);
 
 app.use(express.static('public'))
 
-
-router
+router.use(
+    session({
+        store: new RedisStore({ client: redisClient }),
+        saveUninitialized: false,
+        secret: "keyboard cat",
+        resave: false,
+        cookie: {
+            maxAge: 24 * 60 * 60
+        }
+    }))
     .get('/', async (req, res) => {
         //renders starting page
         res.render('homepage', { layout: false })
@@ -63,7 +81,7 @@ router
             return
         }
         //login here, create session , sent to next page
-        let loginquery = `SELECT username, userpassword,access FROM user_credentials WHERE username = '${req.body.username}' `
+        let loginquery = `SELECT * FROM user_credentials WHERE username = '${req.body.username}' `
         var login_credential;
         try {
             login_credential = await DB.executeQuery(loginquery)
@@ -75,6 +93,9 @@ router
             //check if user have access or not if does then login if not then redirect to login page
             if (login_credential.length && login_credential[0].userpassword == req.body.userpassword) {
                 const userID = await getID.userid(req.body.username);
+                req.session.username = `${login_credential[0].username}`;
+                req.session.userID = `${login_credential[0].user_id}`;
+
                 res.cookie('user', `${login_credential[0].username}`)
                 res.cookie('userID', `${userID}`);
                 // res.render('MainUserInterface', { layout: './layouts/MainUserInterface' })
