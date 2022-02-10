@@ -14,9 +14,10 @@ let RedisStore = require("connect-redis")(session)
 
 const { createClient } = require("redis")
 let redisClient = createClient({
-    port:process.env.HEROKU_REDISPORT,
-    host:process.env.HEROKU_REDISHOST,
+    url: process.env.REDIS_URL,
+    legacyMode: true
 })
+
 redisClient.connect().catch(console.error);
 
 app.use(express.static('public'))
@@ -28,7 +29,7 @@ router.use(
         secret: "keyboard cat",
         resave: false,
         cookie: {
-            maxAge: 24 * 60 * 60
+            maxAge: 24 * 60 * 60 * 1000
         }
     }))
     .get('/', async (req, res) => {

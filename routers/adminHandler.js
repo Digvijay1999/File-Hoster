@@ -23,6 +23,15 @@ const { userid } = require('../controllers/getuserid');
 
 
 //admin router here i.e. manage user, usage,activities and all
+const session = require("express-session")
+let RedisStore = require("connect-redis")(session)
+
+const { createClient } = require("redis")
+let redisClient = createClient({
+    url: process.env.REDIS_URL,
+    legacyMode: true
+})
+redisClient.connect().catch(console.error);
 
 router
     .get('/login', async (req, res) => {
@@ -42,7 +51,10 @@ router
             if (userRole.includes(0)) {
                 res.cookie('user', req.body.username.trim());
                 res.cookie('userID', id);
-                res.redirect(`/admin/adminPanel/?user=${req.body.username}`)
+                req.session.username = `${user}`;
+                req.session.userID = `${userRole}`;
+                req.session.isAdmin = true;
+                res.redirect(`/admin/adminPanel/?user=${user}`);
 
             } else {
                 let dir = path.join(`${__dirname}`, `../views/admin/adminLogin.ejs`)
@@ -54,7 +66,15 @@ router
             res.render(dir, { errorTemp: 'adminLoginError', layout: './layouts/layout_with_admin_error' })
         }
     })
-
+    .use((req, res, next) => {
+        if (!req.session || !req.session.username || req.session.username != req.cookies.user || req.session.userID != req.cookies.userID || req.session.isAdmin) {
+            // const err = new Error('You shall not pass');
+            // err.statusCode = 401;
+            res.end("unauthorized access!! please login")
+            return;
+        }
+        next();
+    })
     .get('/manageuser', async (req, res) => {
 
         if (!req.cookies.user) {
@@ -199,7 +219,7 @@ router
         res.render(dir, { user: req.cookies.user, layout: './layouts/layout_with_navbar_admin.ejs' })
     }).get('/managerole', async (req, res) => {
 
-        const roles = {"0":"admin","1":"upload_files", "2":"view_files", "3": "view_activities"};
+        const roles = { "0": "admin", "1": "upload_files", "2": "view_files", "3": "view_activities" };
 
         let dir = path.join(`${__dirname}`, `../views/admin/managerole.ejs`);
 
@@ -208,12 +228,11 @@ router
         let finalRoles = [];
 
         role.forEach(element => {
-            if(element in roles)
-            {
+            if (element in roles) {
                 finalRoles.push(roles[element]);
             }
         });
-   
+
         let allRoles = Object.values(roles);
         let availableRoles = [];
 

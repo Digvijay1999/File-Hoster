@@ -52,9 +52,28 @@ app.use('/api', api, (req, res) => {
     }
 });
 
+const session = require("express-session")
+let RedisStore = require("connect-redis")(session)
+
+const { createClient } = require("redis")
+let redisClient = createClient({
+    url: process.env.REDIS_URL,
+    legacyMode: true
+})
+
+redisClient.connect().catch(console.error);
+
+app.use(session({
+    store: new RedisStore({ client: redisClient }),
+    saveUninitialized: false,
+    secret: "keyboard cat",
+    resave: false,
+}))
 app.get('/logout', (req, res) => {
     res.clearCookie('userID');
+    res.clearCookie('connect.sid')
     res.clearCookie('user').redirect('/homepage')
+    req.session.destroy();
 
 })
 
