@@ -12,24 +12,6 @@ const upload = require('express-fileupload')
 const DB = require('./db-config');
 const path = require('path');
 
-const { sessionStorage } = require('express-session');
-const session = require("express-session")
-let RedisStore = require("connect-redis")(session)
-
-const { createClient } = require("redis")
-let redisClient = createClient({
-    port: process.env.HEROKU_REDISPORT,
-    host: process.env.HEROKU_REDISHOST,
-})
-redisClient.connect().catch(console.error);
-
-app.use(session({
-    store: new RedisStore({ client: redisClient }),
-    saveUninitialized: false,
-    secret: "keyboard cat",
-    resave: false,
-}))
-
 app.use(upload());
 app.use(cookieparser());
 app.use(express.urlencoded({ extended: false }));
@@ -72,9 +54,8 @@ app.use('/api', api, (req, res) => {
 
 app.get('/logout', (req, res) => {
     res.clearCookie('userID');
-    res.clearCookie('connect.sid');
     res.clearCookie('user').redirect('/homepage')
-    req.session.destroy();
+
 })
 
 app.get('/logout/admin', (req, res) => {
