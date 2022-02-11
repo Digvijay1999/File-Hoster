@@ -21,8 +21,7 @@ let RedisStore = require("connect-redis")(session)
 
 const { createClient } = require("redis")
 let redisClient = createClient({
-    url: process.env.REDIS_URL,
-    legacyMode: true
+    url: process.env.REDIS_URL
 })
 
 redisClient.connect().catch(console.error);
