@@ -13,9 +13,9 @@ const session = require("express-session")
 let RedisStore = require("connect-redis")(session)
 
 const { createClient } = require("redis")
-let redisClient = redis.createClient({
-    url: "redis://:p1b0f84d43ac0691b44055e02b279035543fa90c7548a4726f852708bc630f237@ec2-52-54-121-79.compute-1.amazonaws.com:10179"
-});
+let redisClient = createClient({
+    url: process.env.REDIS_URL
+})
 
 redisClient.connect().catch(console.error);
 
