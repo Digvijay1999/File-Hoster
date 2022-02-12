@@ -39,7 +39,7 @@ router.use(
         saveUninitialized: false,
         secret: "keyboard cat",
         resave: false,
-    }), clientDis())
+    }), clientDis)
     .use((req, res, next) => {
         if (!req.session || !req.session.username || req.session.username != req.cookies.user || req.session.userID != req.cookies.userID) {
             // const err = new Error('You shall not pass');
