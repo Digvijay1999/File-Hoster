@@ -55,16 +55,16 @@ app.use('/api', api, (req, res) => {
 const session = require("express-session")
 let RedisStore = require("connect-redis")(session)
 
-const { createClient } = require("redis")
-let redisClient = createClient({
+const redis = require('redis');
+const client = redis.createClient({
     url: process.env.REDIS_URL,
     legacyMode: true
-})
+});
 
-redisClient.connect().catch(console.error);
+client.connect().catch(console.error);
 
 app.use(session({
-    store: new RedisStore({ client: redisClient }),
+    store: new RedisStore({ client: client }),
     saveUninitialized: false,
     secret: "keyboard cat",
     resave: false,
