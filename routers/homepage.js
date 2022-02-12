@@ -101,6 +101,7 @@ router.use(
                 res.cookie('userID', `${userID}`);
                 // res.render('MainUserInterface', { layout: './layouts/MainUserInterface' })
                 res.redirect(`/file/filemanager/?username=${req.body.username}`)
+                client.quit();
             }
         } else {
             res.sent(`oops, you don't have access to this page sorry`)

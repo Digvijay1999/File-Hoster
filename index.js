@@ -74,7 +74,7 @@ app.get('/logout', (req, res) => {
     res.clearCookie('connect.sid')
     res.clearCookie('user').redirect('/homepage')
     req.session.destroy();
-
+    client.quit();
 })
 
 app.get('/logout/admin', (req, res) => {
