@@ -26,13 +26,24 @@ const { userid } = require('../controllers/getuserid');
 const session = require("express-session")
 let RedisStore = require("connect-redis")(session)
 
-const { createClient } = require("redis")
-let redisClient = createClient({
-    url: process.env.REDIS_URL
-})
-redisClient.connect().catch(console.error);
+const redis = require('redis');
+const client = redis.createClient({
+    url: process.env.REDIS_URL,
+    legacyMode: true
+});
 
-router
+client.connect().catch(console.error);
+
+router.use(
+    session({
+        store: new RedisStore({ client: client }),
+        saveUninitialized: false,
+        secret: "keyboard cat",
+        resave: false,
+        cookie: {
+            maxAge: 24 * 60 * 60 * 1000
+        }
+    }))
     .get('/login', async (req, res) => {
 
         let dir = path.join(`${__dirname}`, `../views/admin/adminLogin.ejs`)
@@ -50,8 +61,8 @@ router
             if (userRole.includes(0)) {
                 res.cookie('user', req.body.username.trim());
                 res.cookie('userID', id);
-                req.session.username = `${user}`;
-                req.session.userID = `${userRole}`;
+                req.session.username = user;
+                req.session.userID = id;
                 req.session.isAdmin = true;
                 res.redirect(`/admin/adminPanel/?user=${user}`);
 
@@ -64,9 +75,8 @@ router
             let dir = path.join(`${__dirname}`, `../views/admin/adminLogin.ejs`)
             res.render(dir, { errorTemp: 'adminLoginError', layout: './layouts/layout_with_admin_error' })
         }
-    })
-    .use((req, res, next) => {
-        if (!req.session || !req.session.username || req.session.username != req.cookies.user || req.session.userID != req.cookies.userID || req.session.isAdmin) {
+    }).use((req, res, next) => {
+        if (!req.session || !req.session.username || req.session.username != req.cookies.user || req.session.userID != req.cookies.userID) {
             // const err = new Error('You shall not pass');
             // err.statusCode = 401;
             res.end("unauthorized access!! please login")

@@ -19,18 +19,19 @@ const { getRole } = require('../controllers/getRole');
 const session = require('express-session');
 let RedisStore = require("connect-redis")(session)
 
-const { createClient } = require("redis")
-let redisClient = createClient({
-    url: process.env.REDIS_URL
-})
+const redis = require('redis');
+const client = redis.createClient({
+    url: process.env.REDIS_URL,
+    legacyMode: true
+});
 
-redisClient.connect().catch(console.error);
+client.connect().catch(console.error);
 
 app.use(express.static('public'))
 
 router.use(
     session({
-        store: new RedisStore({ client: redisClient }),
+        store: new RedisStore({ client: client }),
         saveUninitialized: false,
         secret: "keyboard cat",
         resave: false,
