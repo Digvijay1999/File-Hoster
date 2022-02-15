@@ -99,6 +99,8 @@ router.use(
 
                 res.cookie('user', `${login_credential[0].username}`)
                 res.cookie('userID', `${userID}`);
+
+                console.log("cookie with session sent to user");
                 // res.render('MainUserInterface', { layout: './layouts/MainUserInterface' })
                 res.redirect(`/file/filemanager/?username=${req.body.username}`)
                 client.quit();
