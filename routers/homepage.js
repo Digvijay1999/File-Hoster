@@ -15,7 +15,7 @@ let RedisStore = require("connect-redis")(session)
 const redis = require('redis');
 const client = redis.createClient({
     url: `${process.env.REDIS_URL}`,
-    legacyMode: true
+    legacyMode: false
 });
 
 client.connect().catch(console.error);
@@ -101,7 +101,7 @@ router.use(
                 res.cookie('userID', `${userID}`);
                 // res.render('MainUserInterface', { layout: './layouts/MainUserInterface' })
                 res.redirect(`/file/filemanager/?username=${req.body.username}`)
-                await client.quit();
+                client.quit();
             }
         } else {
             res.sent(`oops, you don't have access to this page sorry`)
