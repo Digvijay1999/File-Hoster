@@ -108,9 +108,9 @@ router
         } else {
             res.sent(`oops, you don't have access to this page sorry`)
         }
-        client.quit();
-        client.on("error", () => { });
-        return;
+        // await client.quit();
+        // client.on("error", () => { });
+        // return;
     })
 
 module.exports = router;
