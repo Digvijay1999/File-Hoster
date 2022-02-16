@@ -103,14 +103,16 @@ router
 
                 console.log("cookie with session sent to user");
                 // res.render('MainUserInterface', { layout: './layouts/MainUserInterface' })
+                client.quit();
+                client.on("error", () => { });
                 res.redirect(`/file/filemanager/?username=${req.body.username}`)
+                return
             }
         } else {
             res.sent(`oops, you don't have access to this page sorry`)
         }
-        // await client.quit();
-        // client.on("error", () => { });
-        // return;
+        client.quit();
+        client.on("error", () => { });
     })
 
 module.exports = router;
