@@ -15,7 +15,10 @@ let RedisStore = require("connect-redis")(session)
 const redis = require('redis');
 const client = redis.createClient({
     url: process.env.REDIS_URL,
-    legacyMode: true
+    legacyMode: true,
+    socket: {
+        keepAlive: false
+    }
 });
 
 client.connect().catch(console.error);
