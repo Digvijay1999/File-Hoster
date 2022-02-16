@@ -14,24 +14,15 @@ let RedisStore = require("connect-redis")(session)
 
 const redis = require('redis');
 const client = redis.createClient({
-    url: `${process.env.REDIS_URL}`,
-    legacyMode: false
+    url: process.env.REDIS_URL,
+    legacyMode: true
 });
 
 client.connect().catch(console.error);
 
 app.use(express.static('public'))
 
-router.use(
-    session({
-        store: new RedisStore({ client: client }),
-        saveUninitialized: false,
-        secret: "keyboard cat",
-        resave: false,
-        cookie: {
-            maxAge: 24 * 60 * 60 * 1000
-        }
-    }))
+router
     .get('/', async (req, res) => {
         //renders starting page
         res.render('homepage', { layout: false })
@@ -71,6 +62,16 @@ router.use(
         console.log('user created');
 
     })
+    .use(
+        session({
+            store: new RedisStore({ client: client }),
+            saveUninitialized: false,
+            secret: "keyboard cat",
+            resave: false,
+            cookie: {
+                maxAge: 24 * 60 * 60 * 1000
+            }
+        }))
     .post('/login', async (req, res) => {
 
         console.log("login page hit");
@@ -103,11 +104,13 @@ router.use(
                 console.log("cookie with session sent to user");
                 // res.render('MainUserInterface', { layout: './layouts/MainUserInterface' })
                 res.redirect(`/file/filemanager/?username=${req.body.username}`)
-                client.quit();
             }
         } else {
             res.sent(`oops, you don't have access to this page sorry`)
         }
+        client.quit();
+        client.on("error", () => { });
+        return;
     })
 
 module.exports = router;

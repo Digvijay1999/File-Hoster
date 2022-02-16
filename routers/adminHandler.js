@@ -34,10 +34,6 @@ const client = redis.createClient({
 
 client.connect().catch(console.error);
 
-function clientdis() {
-    client.quit();
-}
-
 router.use(
     session({
         store: new RedisStore({ client: client }),
@@ -70,6 +66,7 @@ router.use(
                 req.session.isAdmin = true;
                 res.redirect(`/admin/adminPanel/?user=${user}`);
                 client.quit();
+                client.on("error", () => { });
                 return;
 
             } else {
@@ -86,10 +83,12 @@ router.use(
             // const err = new Error('You shall not pass');
             // err.statusCode = 401;
             res.end("unauthorized access!! please login")
-            clientdis();
+            client.quit();
+            client.on("error", () => { });
             return;
         }
-        clientdis();
+        client.quit();
+        client.on("error", () => { });
         next();
     })
     .get('/manageuser', async (req, res) => {
