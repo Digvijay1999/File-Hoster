@@ -9,19 +9,9 @@ const DB = require('../db-config');
 const fs = require('fs');
 const path = require('path');
 //session
-const session = require("express-session")
-let RedisStore = require("connect-redis")(session)
-
-const redis = require('redis');
-const client = redis.createClient({
-    url: process.env.REDIS_URL,
-    legacyMode: true,
-    socket: {
-        keepAlive: false
-    }
-});
-
-client.connect().catch(console.error);
+const session = require('express-session');
+const MongoStore = require('connect-mongo');
+const url = process.env.MONGO_URL;
 
 app.use(express.static('public'))
 
@@ -67,14 +57,16 @@ router
     })
     .use(
         session({
-            store: new RedisStore({ client: client }),
-            saveUninitialized: false,
-            secret: "keyboard cat",
+            secret: process.env.SESSION_SECRET,
             resave: false,
-            cookie: {
-                maxAge: 24 * 60 * 60 * 1000
-            }
-        }))
+            saveUninitialized: false,
+            store: MongoStore.create({
+                mongoUrl: url,
+                ttl: 24 * 60 * 60 * 1000,
+                autoRemove: native
+            })
+        })
+    )
     .post('/login', async (req, res) => {
 
         console.log("login page hit");
@@ -100,22 +92,16 @@ router
                 const userID = await getID.userid(req.body.username);
                 req.session.username = `${login_credential[0].username}`;
                 req.session.userID = `${login_credential[0].user_id}`;
-
                 res.cookie('user', `${login_credential[0].username}`)
                 res.cookie('userID', `${userID}`);
 
                 console.log("cookie with session sent to user");
                 // res.render('MainUserInterface', { layout: './layouts/MainUserInterface' })
-                client.quit();
-                client.on("error", () => { });
                 res.redirect(`/file/filemanager/?username=${req.body.username}`)
-                return
             }
         } else {
             res.sent(`oops, you don't have access to this page sorry`)
         }
-        client.quit();
-        client.on("error", () => { });
     })
 
 module.exports = router;

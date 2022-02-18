@@ -16,38 +16,31 @@ const usedAndAllowedSpace = require('../controllers/usedSpaceAndAllowedSpace');
 const { getRole } = require('../controllers/getRole');
 
 //session
+
 const session = require('express-session');
-let RedisStore = require("connect-redis")(session)
-
-const redis = require('redis');
-const client = redis.createClient({
-    url: process.env.REDIS_URL,
-    legacyMode: true
-});
-
-client.connect().catch(console.error);
+const MongoStore = require('connect-mongo');
+const url = process.env.MONGO_URL;
 
 app.use(express.static('public'))
 
-router.use(
-    session({
-        store: new RedisStore({ client: client }),
-        saveUninitialized: false,
-        secret: "keyboard cat",
-        resave: false,
-    }))
+router
+    .use(
+        session({
+            secret: process.env.SESSION_SECRET,
+            resave: false,
+            saveUninitialized: false,
+            store: MongoStore.create({
+                mongoUrl: url,
+            })
+        })
+    )
     .use((req, res, next) => {
         if (!req.session || !req.session.username || req.session.username != req.cookies.user || req.session.userID != req.cookies.userID) {
             // const err = new Error('You shall not pass');
             // err.statusCode = 401;
             res.end("unauthorized access!! please login")
-            client.quit();
-            client.on("error", () => { });
             return;
         }
-        client.quit();
-        client.on("error", () => { })
-
         next();
     })
     .get('/upload', async (req, res) => {

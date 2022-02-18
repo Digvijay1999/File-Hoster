@@ -25,9 +25,7 @@ app.set('layout', './layouts/universal.ejs')
 
 app.listen(process.env.PORT || 8000, () => {
     if (process.env.PORT) {
-        console.log("server started on heroku");
-    } else {
-        console.log('server started at http://localhost:8000');
+        console.log("server started on port" + process.env.PORT || 8000);
     }
 })
 
@@ -52,33 +50,34 @@ app.use('/api', api, (req, res) => {
     }
 });
 
-const session = require("express-session")
-let RedisStore = require("connect-redis")(session)
+const session = require('express-session');
+const MongoStore = require('connect-mongo');
+const url = process.env.MONGO_URL;
 
-const redis = require('redis');
-const client = redis.createClient({
-    url: process.env.REDIS_URL,
-    legacyMode: true
-});
-
-client.connect().catch(console.error);
-
-app.use(session({
-    store: new RedisStore({ client: client }),
-    saveUninitialized: false,
-    secret: "keyboard cat",
-    resave: false,
-}))
+app.use(
+    session({
+        secret: process.env.SESSION_SECRET,
+        resave: false,
+        saveUninitialized: false,
+        store: MongoStore.create({
+            mongoUrl: url,
+        })
+    })
+)
 app.get('/logout', (req, res) => {
+    console.log(req.cookies.user + " logged out");
     res.clearCookie('userID');
     res.clearCookie('connect.sid')
     res.clearCookie('user').redirect('/homepage')
     req.session.destroy();
-    client.quit();
 })
 
 app.get('/logout/admin', (req, res) => {
     res.clearCookie('admin').redirect('/admin/login')
+    res.clearCookie('userID');
+    res.clearCookie('connect.sid')
+    res.clearCookie('user').redirect('/homepage')
+    req.session.destroy();
 })
 
 app.get('*', function (req, res) {

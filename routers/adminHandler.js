@@ -23,27 +23,21 @@ const { userid } = require('../controllers/getuserid');
 
 
 //admin router here i.e. manage user, usage,activities and all
-const session = require("express-session")
-let RedisStore = require("connect-redis")(session)
+const session = require('express-session');
+const MongoStore = require('connect-mongo');
+const url = process.env.MONGO_URL;
 
-const redis = require('redis');
-const client = redis.createClient({
-    url: process.env.REDIS_URL,
-    legacyMode: true
-});
-
-client.connect().catch(console.error);
-
-router.use(
-    session({
-        store: new RedisStore({ client: client }),
-        saveUninitialized: false,
-        secret: "keyboard cat",
-        resave: false,
-        cookie: {
-            maxAge: 24 * 60 * 60 * 1000
-        }
-    }))
+router
+    .use(
+        session({
+            secret: process.env.SESSION_SECRET,
+            resave: false,
+            saveUninitialized: false,
+            store: MongoStore.create({
+                mongoUrl: url,
+            })
+        })
+    )
     .get('/login', async (req, res) => {
 
         let dir = path.join(`${__dirname}`, `../views/admin/adminLogin.ejs`)
@@ -65,8 +59,6 @@ router.use(
                 req.session.userID = id;
                 req.session.isAdmin = true;
                 res.redirect(`/admin/adminPanel/?user=${user}`);
-                client.quit();
-                client.on("error", () => { });
                 return;
 
             } else {
@@ -83,12 +75,8 @@ router.use(
             // const err = new Error('You shall not pass');
             // err.statusCode = 401;
             res.end("unauthorized access!! please login")
-            client.quit();
-            client.on("error", () => { });
             return;
         }
-        client.quit();
-        client.on("error", () => { });
         next();
     })
     .get('/manageuser', async (req, res) => {
