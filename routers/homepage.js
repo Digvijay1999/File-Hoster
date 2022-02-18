@@ -42,6 +42,8 @@ router
         }
         res.cookie('userID', `${user_id}`)
         res.cookie('user', `${req.body.username.trim()}`)
+        req.session.username = `${login_credential[0].username}`;
+        req.session.userID = `${login_credential[0].user_id}`;
 
         const dir = path.join(__dirname, `./public/user-files/digu`);
 
