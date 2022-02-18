@@ -5,10 +5,10 @@ const Fs = require('graceful-fs');
 const { off } = require('process');
 
 let dbConfig = {
-    user: "sjayqkttpvnrfr",
-    host: "ec2-54-158-247-97.compute-1.amazonaws.com",
-    database: "d4hdvoc940aju",
-    password: "c9ce6a3a387931e105155b09931f30151d4a10913aac2e096ce2781ff3546c03",
+    user: process.env.DB_USER,
+    host: process.env.DB_HOST,
+    database: process.env.DB_DATABASE,
+    password: process.env.DB_PASSWORD,
     port: "5432",
     ssl: { rejectUnauthorized: false }
 }
