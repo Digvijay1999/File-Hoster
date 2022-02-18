@@ -63,7 +63,7 @@ router
             store: MongoStore.create({
                 mongoUrl: url,
                 ttl: 24 * 60 * 60 * 1000,
-                autoRemove: native
+                autoRemove: 'native'
             })
         })
     )
