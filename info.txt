@@ -1,3 +1,0 @@
-# this is session_handler branch
-in this branch we are going to add feature of session handling using redis and
-merge into master branch
