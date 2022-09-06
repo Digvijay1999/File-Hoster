@@ -1,0 +1,33 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <link rel="stylesheet" href="/css/userModules.css">
+</head>
+
+<body>
+
+    <div>
+       
+        <%-body%>
+
+        <% if(role.includes(1)){ %>
+            <%- include('../partials/modules/fileUpload.ejs')%>
+                <% } %>
+
+        <% if(role.includes(2)){ %>
+            <%- include('../partials/modules/myFiles.ejs')%>
+                <% } %>
+                
+        <% if(role.includes(3)){ %>
+            <%- include('../partials/modules/myActions.ejs')%>
+                <% } %>
+
+    </div>
+
+</body>
+
+</html>

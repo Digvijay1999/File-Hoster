@@ -1,0 +1,41 @@
+.card {
+    border-radius: 5px;
+    padding: 10px;
+    display: block;
+    text-decoration: none;
+    margin: 10px;
+    height: 200px;
+}
+
+.flex-box-container {
+    display: flex;
+    justify-content: space-around;
+
+}
+
+.flex-box-item {
+    width: 500px;
+    margin: 10px;
+    background-color: #9cc3d5ff;
+    border: solid 2px rgb(14, 71, 104);
+
+
+}
+
+.flex-box-item:hover {
+    background-color: white;
+}
+
+.card-title {
+    font-size: larger;
+    color: black;
+}
+
+.card-text {
+    font-size: larger;
+    color: black;
+}
+.flex{
+    display: flex;
+    justify-content: space-around;
+}

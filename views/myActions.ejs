@@ -1,0 +1,34 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>MyActions</title>
+</head>
+
+<body>
+
+
+    <table>
+        <% for(var i=0; i < files.length; i++) { %>
+            <tr>
+
+                <div style="border-style: solid; border-color: black; border-width: thin; padding: 15px; font-size: smaller;">
+                        <div>
+                            <h2>
+                                FILE NAME: <%= files[i].file_name %> <br>
+                                    ACTION: <%= files[i].action %> <br>
+                                        TIME: <%= files[i].time %> <br>
+                            </h2>
+                        </div>
+                </div>
+
+            </tr>
+            <% } %>
+    </table>
+
+</body>
+
+</html>

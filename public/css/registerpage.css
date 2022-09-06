@@ -1,0 +1,57 @@
+.inputs {
+    margin: 20px;
+}
+
+#header{
+    font-family:sans-serif;
+    margin-bottom: 1cm;
+    background-color:rgb(102, 102, 204);
+    padding: 5px;
+    border-radius: 5px;
+}
+
+#headertext{
+    font-weight: 500;
+    color: aliceblue;
+    font-stretch: ultra-expanded;
+}
+
+.required:after {
+    content:" *";
+    color: red;  
+}
+
+#name{
+    font-size: larger;
+}
+#username{
+    font-size: larger;
+    margin-right: 30px;
+}
+#passworddiv{
+font-size: larger;
+margin-right: 25px;
+}
+#confirmPassword{
+    font-size: larger;
+    margin-right: 95px;
+}
+#email{
+    font-size: larger;
+    margin-left: 5px;
+}
+#gender{
+    font-size: larger;
+    
+}
+#genderdiv{
+    margin-right: 3.9cm;
+}
+#age{
+    font-size: larger;
+  margin-left: 30px;
+}
+#address{
+    font-size: larger;
+margin-left: 75px;
+}
