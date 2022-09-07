@@ -5,10 +5,10 @@ const Fs = require('graceful-fs');
 const { off } = require('process');
 
 let dbConfig = {
-    user: process.env.HEROKU_USER,
-    host: process.env.HEROKU_HOST,
-    database: process.env.HEROKU_DB,
-    password: process.env.HEROKU_PASSWORD,
+    user: process.env.DB_USER,
+    host: process.env.DB_HOST,
+    database: process.env.DB_DATABASE,
+    password: process.env.DB_PASSWORD,
     port: "5432",
     ssl: { rejectUnauthorized: false }
 }
