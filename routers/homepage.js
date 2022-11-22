@@ -8,8 +8,8 @@ const getID = require('../controllers/getuserid');
 const DB = require('../db-config');
 const fs = require('fs');
 const path = require('path');
+const jwtSignToken = require('../controllers/Auth/jwtSignToken')
 //session
-
 app.use(express.static('public'))
 
 router
@@ -23,7 +23,7 @@ router
     })
     .post('/register', async (req, res) => {
         console.log("recied sign up request");
-        let result = await userSignUp.userRegisterValidation(req.body)
+        let result = userSignUp.userRegisterValidation(req.body)
 
         if (result.error) {
             res.end(result.error.message)
@@ -38,8 +38,9 @@ router
             res.end("error occurred")
             return;
         }
-        res.cookie('userID', `${user_id}`)
-        res.cookie('user', `${req.body.username.trim()}`)
+
+        let jwtToken = jwtSignToken({ "username": `${req.body.username.trim()}`, "userID": user_id })
+        res.cookie("token", jwtToken)
 
         const dir = path.join(__dirname, `./public/user-files/digu`);
 
@@ -54,6 +55,7 @@ router
 
     })
     .post('/login', async (req, res) => {
+        //jwt
 
         console.log("login page hit");
 
@@ -76,11 +78,9 @@ router
             //check if user have access or not if does then login if not then redirect to login page
             if (login_credential.length && login_credential[0].userpassword == req.body.userpassword) {
                 const userID = await getID.userid(req.body.username);
-                res.cookie('user', `${login_credential[0].username}`)
-                res.cookie('userID', `${userID}`);
-
-                console.log("cookie with session sent to user");
                 // res.render('MainUserInterface', { layout: './layouts/MainUserInterface' })
+                let jwtToken = jwtSignToken({ "username": `${login_credential[0].username}`, "userID": userID })
+                res.cookie("token", jwtToken)
                 res.redirect(`/file/filemanager/?username=${req.body.username}`)
             }
         } else {
