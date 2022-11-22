@@ -3,7 +3,6 @@ const app = express();
 const router = express.Router();
 const DB = require('../db-config');
 const fs = require('fs');
-const { dir } = require('console');
 const path = require('path');
 const fileHandle = require('../controllers/UserFileEntryToDB')
 const getAction = require('../controllers/getActionsOfUser')
@@ -14,10 +13,14 @@ const currentallowedspace = require('../controllers/Admin/getCurrentAllowedSpace
 const totalspaceusedbyuser = require('../controllers/Admin/gettotalspaceusedbyuser')
 const usedAndAllowedSpace = require('../controllers/usedSpaceAndAllowedSpace');
 const { getRole } = require('../controllers/getRole');
+const verifyToken = require('../controllers/Auth/jwtVerifyToken')
+const cookieparser = require('cookie-parser')
 
 app.use(express.static('public'))
+app.use(cookieparser());
 
 router
+    .use(verifyToken(req, res, next))
     .get('/upload', async (req, res) => {
         if (!req.cookies.user) {
             res.status(403)
@@ -167,34 +170,32 @@ router
             res.redirect('/file/myfiles')
         }
     })
+    .get('/filemanager', async (req, res) => {
 
+        let role = [];
 
-router.get('/filemanager', async (req, res) => {
-
-    let role = [];
-
-    try {
-        let temprole = await getRole(req.cookies.userID);
-        if (temprole) {
-            role = temprole;
+        try {
+            let temprole = await getRole(req.cookies.userID);
+            if (temprole) {
+                role = temprole;
+            }
+        } catch (error) {
+            console.log("error while serving main-user-interface " + error);
+            return;
         }
-    } catch (error) {
-        console.log("error while serving main-user-interface " + error);
-        return;
-    }
-    try {
-        if (req.cookies.user) {
-            let user = req.cookies.user
-            let storageSpace = await usedAndAllowedSpace.getData(req.cookies.userID);
-            res.render('MainUserInterface', { role: role, user: user, storageSpace: storageSpace, layout: './layouts/modular' })
-            // 
-        } else {
-            res.status(403)
-            res.end()
+        try {
+            if (req.cookies.user) {
+                let user = req.cookies.user
+                let storageSpace = await usedAndAllowedSpace.getData(req.cookies.userID);
+                res.render('MainUserInterface', { role: role, user: user, storageSpace: storageSpace, layout: './layouts/modular' })
+                // 
+            } else {
+                res.status(403)
+                res.end()
+            }
+        } catch (error) {
+            console.log("error while rendering the main user interface");
         }
-    } catch (error) {
-        console.log("error while rendering the main user interface");
-    }
-})
+    })
 
 module.exports = router;
