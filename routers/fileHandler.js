@@ -20,7 +20,9 @@ app.use(express.static('public'))
 app.use(cookieparser());
 
 router
-    .use(verifyToken(req, res, next))
+    .use((req, res, next) => {
+        verifyToken(req, res, next)
+    })
     .get('/upload', async (req, res) => {
         if (!req.cookies.user) {
             res.status(403)
