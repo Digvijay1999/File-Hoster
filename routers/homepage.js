@@ -79,7 +79,7 @@ router
             if (login_credential.length && login_credential[0].userpassword == req.body.userpassword) {
                 const userID = await getID.userid(req.body.username);
                 // res.render('MainUserInterface', { layout: './layouts/MainUserInterface' })
-                let jwtToken = jwtSignToken({ "username": `${login_credential[0].username}`, "userID": userID })
+                let jwtToken = jwtSignToken({ "username": req.body.username, "userID": userID })
                 res.cookie("token", jwtToken)
                 res.redirect(`/file/filemanager/?username=${req.body.username}`)
             }
