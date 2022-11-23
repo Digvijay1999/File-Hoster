@@ -80,9 +80,9 @@ const connectDB = async () => {
         max: 20
     })
 
-    await client.connect()
+    let cli = await client.connect()
 
-    Pool.query("SELECT * FROM user_information").then((res) => {
+    cli.query("SELECT * FROM user_information").then((res) => {
         console.log("query is executed");
         console.log(res.rows);
     });
