@@ -1,4 +1,3 @@
-const { result } = require('lodash');
 const DB = require('../db-config')
 
 async function checker(reqBody) {
@@ -10,9 +9,9 @@ async function checker(reqBody) {
 
     let result;
     try {
-         result = await DB.executeQuery(userExits);
+        result = await DB.executeQuery(userExits);
     } catch (error) {
-        console.log("connection to database failed, at loginCredChecker");
+        console.log("connection to database failed, at loginCredChecker" + error);
         return;
     }
 
