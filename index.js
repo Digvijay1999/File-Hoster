@@ -23,12 +23,15 @@ app.set('view engine', 'ejs')
 app.use(layouts);
 app.set('layout', './layouts/universal.ejs')
 
-app.listen(process.env.PORT || 8000, () => {
-    if (process.env.PORT) {
-        console.log("server started on port" + process.env.PORT || 8000);
-    } else {
-        console.log("server started on 127.0.0.1:8000");
-    }
+DB.connectDB(() => {
+    DB.seedTables()
+    app.listen(process.env.PORT || 8000, () => {
+        if (process.env.PORT) {
+            console.log("server started on port" + process.env.PORT || 8000);
+        } else {
+            console.log("server started on 127.0.0.1:8000");
+        }
+    })
 })
 
 app.get('/', (req, res) => {
@@ -40,7 +43,6 @@ app.use('/homepage', homepage);
 app.use('/file', fileHandler);
 
 app.use('/admin', admin, (req, res) => {
-
     if (!req.cookies.user) {
         return
     }
