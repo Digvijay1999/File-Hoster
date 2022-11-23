@@ -1,16 +1,19 @@
-const { Client } = require('pg');
-const Path = require('path');
-const _ = require('lodash');
-const Fs = require('graceful-fs');
-const { off } = require('process');
+const { Pool } = require('pg');
+const fs = require('fs');
+const path = require('path');
+require('dotenv').config()
+
+
+var sql = fs.readFileSync(path.join(__dirname, '/dbschema', "/intialDatabaseSetup.pgsql")).toString();
+let pgPool;
 
 let dbConfig = {
     user: process.env.DB_USER,
     host: process.env.DB_HOST,
     database: process.env.DB_DATABASE,
     password: process.env.DB_PASSWORD,
-    port: "5432",
-    ssl: { rejectUnauthorized: false }
+    port: process.env.DB_PORT,
+    max: 20
 }
 
 /**
@@ -23,38 +26,54 @@ let dbConfig = {
 
 async function executeQuery(query, values) {
     try {
-        var client = await connectDB()
+        let cli = await pgPool.connect()
+        let result = await cli.query(query, values);
+        cli.release()
+        let res = result.rows;
+        return res;
     } catch (error) {
-        console.log("error while connecting to db");
+        throw error
     }
-    let result = await client.query(query, values);
-    client.end();
-    let res = result.rows;
-    return res;
+
 }
 
 /**
- *try to make connection to database 3 times and return the client if successful else throw an error
+ *try to make connection to database 2 times and return the client if successful else throw an error
  * @return {Client} 
  */
-async function connectDB() {
-
+async function connectDB(callback) {
     try {
-        var client = new Client(dbConfig)
-        await client.connect()
-        return client;
+        var pool = new Pool(dbConfig)
+        let clie = await pool.connect()
+        clie.release()
+        pgPool = pool
     } catch (error) {
         console.log("could not connect to db, retrying...");
         try {
-            await client.connect()
-            return client;
+            let clie = await pool.connect()
+            clie.release()
+            pgPool = pool;
         } catch (error) {
             console.log("could not connect to db, exiting..");
         }
+    } finally {
+        callback()
     }
 }
 
+const seedTables = async () => {
+    let cli = await pgPool.connect()
+    cli.query(sql, (err, result) => {
+        if (err) {
+            console.log("error while seeding database");
+        } else {
+            console.log("database seeded successfully!");
+        }
+    })
+}
+
 module.exports = {
-    executeQuery: executeQuery,
-    connectDB: connectDB
+    executeQuery,
+    connectDB,
+    seedTables
 }
