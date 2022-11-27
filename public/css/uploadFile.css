@@ -1,0 +1,40 @@
+.content {
+    margin-top: 15px;
+    width: 100%;
+    border-width: 1px;
+    border-color: black;
+    border-style: solid;
+    padding: 10px;
+
+}
+
+.progressbar {
+    width: 50%;
+    height: 6px;
+    margin-top: 20px;
+    background-color: crimson;
+}
+
+#formDiv {
+    border-width: 2px;
+    border-color: black;
+    border-style: dashed;
+}
+
+.mainDiv {
+    margin: auto;
+    width: 50%;
+    padding: 10px;
+}
+
+#img {
+    display: block;
+    margin-left: auto;
+    margin-right: auto
+}
+
+#uploadedImg {
+    float: right;
+    width: 20px;
+    height: 20px;
+}

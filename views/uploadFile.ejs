@@ -1,17 +1,42 @@
 <!DOCTYPE html>
 <html lang="en">
+
 <head>
     <meta charset="UTF-8">
     <meta http-equiv="X-UA-Compatible" content="IE=edge">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>upload file</title>
+    <link rel="stylesheet" href="/css/uploadFile.css">
+    </link>
 </head>
+
 <body>
     <h2>Upload Files</h2>
-    <form action="/file/upload" method="POST"  enctype="multipart/form-data">
-    <input type="file" required name="file"/>
-    <input type="submit"  value="upload"/>
-    </form>
-    
+    <div class="mainDiv">
+        <div id="formDiv">
+            <form id="form">
+                <img id="img" src="/images/uploadImage.png" alt="upload files">
+                <input type="file" required name="file" hidden />
+            </form>
+        </div>
+
+        <div class="content">
+            <span>filename.jpg</span>
+            <span>uploading 50%</span>
+            <div class="progressbar"></div>
+        </div>
+
+        <div class="content">
+            <div>
+                <span style="display: inline;">filename.jpg</span> <span style="display: inline; margin-left: 10px;">
+                    <b>Done</b>
+                </span>
+            </div>
+        </div>
+    </div>
+    </div>
 </body>
+
+<script src="/scripts/uploadFile.js"></script>
+
 </html>
