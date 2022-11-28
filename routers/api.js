@@ -7,7 +7,7 @@ app.use(express.urlencoded({ extended: false }));
 
 const cors = require('cors');
 const corsOptions = {
-    origin: 'http://localhost:8000',
+    origin: ['http://localhost:8000', "http://127.0.0.1:8000/"],
     credentials: true,            //access-control-allow-credentials:true
     optionSuccessStatus: 200
 }
