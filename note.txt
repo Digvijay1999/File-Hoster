@@ -6,3 +6,10 @@ CREATE DATABASE "File-Hoster"
     ENCODING = 'UTF8'
     CONNECTION LIMIT = -1
     IS_TEMPLATE = False;
+
+2) serving static files
+<script src="/files/uploadFile.js"></script>
+
+app.use(express.static('public')) //sets static folder
+//app.use('/css', express.static(__dirname + 'public/css'))
+app.use('/files', express.static(__dirname + 'public/files')) //sets the paths as static
