@@ -1,8 +1,9 @@
 const express = require('express');
 const app = express();
 const router = express.Router();
-const DB = require('../db-config');
 const fs = require('fs');
+
+const DB = require('../db-config');
 const path = require('path');
 const fileHandle = require('../controllers/UserFileEntryToDB')
 const getAction = require('../controllers/getActionsOfUser')
@@ -15,6 +16,7 @@ const usedAndAllowedSpace = require('../controllers/usedSpaceAndAllowedSpace');
 const { getRole } = require('../controllers/getRole');
 const verifyToken = require('../controllers/Auth/jwtVerifyToken')
 const cookieparser = require('cookie-parser')
+const { generateS3URL } = require('../controllers/fileHandlers/s3urlGenerator')
 
 app.use(express.static('public'))
 app.use(cookieparser());
@@ -44,64 +46,73 @@ router
             res.end()
         }
 
-        try {
-            if (!req.cookies) {
-                throw 'User session is not configured.'
-            }
-            console.log(`Attempting to upload user = ` + req.cookies.user);
+        if (!req.cookies) {
+            throw 'User session is not configured.'
+        }
+        //console.log(`Attempting to upload user = ` + req.cookies.user);
 
-            var file = req.files.file
-            let fileSizeInMB = file.size / 1000000
-            let user_id = req.cookies.userID
-            let totalspaceused = Number(await totalspaceusedbyuser.totalusedspace(user_id))
-            let allowedSpace = Number(await currentallowedspace.getAllowedSpace(user_id))
-            let spaceLeft = allowedSpace - totalspaceused;
+        console.log(req.body);
 
-            if (totalspaceused < allowedSpace) {
-                if (fileSizeInMB < spaceLeft) {
-                    if (req.files) {
-                        var filename = file.name
-                        let user = req.cookies.user;
+        let filename = req.body.filename
+        let size = parseInt(req.body.size)
+        let type = req.body.type
 
-                        //current directory for fileHandler is C:\Users\diguy\Desktop\git\file-handler\routers
-                        const dir = path.join(__dirname, `../public/user-files/${user}`);
+        console.log(filename, size, type);
 
-                        if (!fs.existsSync(dir)) {
-                            await fs.mkdirSync(dir, { recursive: true });
-                        }
 
-                        const filedir = path.join(__dirname, `../`, `public/user-files/${user}`, `${filename}`);
+        let fileSizeInMB = size / 1000000
+        let user_id = req.cookies.userID
+        let totalspaceused = Number(await totalspaceusedbyuser.totalusedspace(user_id))
+        let allowedSpace = Number(await currentallowedspace.getAllowedSpace(user_id))
+        let spaceLeft = allowedSpace - totalspaceused;
 
-                        try {
-                            await file.mv(filedir, (error) => {
-                                if (error) {
-                                    throw "error occurred while moving file to users folder ";
-                                }
-                            })
-                        } catch (error) {
-                            res.end("error occurred while storing file please try again");
-                            console.log("error while files was uploading");
-                        }
-                        await fileHandle.fileEntry(user, filedir, fileSizeInMB, filename)
-                        await insertIntoAction.insertIntoAction(user, new Date().toISOString(), 'upload', filename)
+        console.log(totalspaceused, allowedSpace);
 
-                        res.redirect(`/file/filemanager/?username=${user}`)
-                    } else {
-                        throw `File is not available to upload`;
-                    }
-                } else if (fileSizeInMB > spaceLeft) {
-                    throw ` User don't have enough space to upload this file. Please contact to you admin for space.`;
-                }
-
-            } else {
-                throw ` User don't have enough space to upload this file. Please contact to you admin for space.`;
-            }
-        } catch (error) {
-            console.log("error occurred while file was being uploaded " + error);
-            res.end(error)
+        if (!(totalspaceused < allowedSpace)) {
+            res.end(`User don't have enough space to upload this file. Please contact to you admin for space.`)
+            console.log("space errror 1");
+            return
         }
 
-    }).get('/myfiles', async (req, res) => {
+        console.log(fileSizeInMB, spaceLeft);
+        if (!(fileSizeInMB < spaceLeft)) {
+            res.end("User don't have enough space to upload this file. Please contact to you admin for space")
+            console.log("space errror 2");
+            return
+        }
+
+        let user = req.cookies.user;
+
+        let url = await generateS3URL(`${req.cookies.user}/${req.cookies.userID}/${filename}`)
+        console.log(url)
+        res.send(url)
+
+        //main file upload logic
+        //current directory for fileHandler is C:\Users\diguy\Desktop\git\file-handler\routers
+        //     const dir = path.join(__dirname, `../public/user-files/${user}`);
+
+        //     if (!fs.existsSync(dir)) {
+        //         await fs.mkdirSync(dir, { recursive: true });
+        //     }
+
+        //     const filedir = path.join(__dirname, `../`, `public/user-files/${user}`, `${filename}`);
+
+        //     try {
+        //         await file.mv(filedir, (error) => {
+        //             if (error) {
+        //                 throw "error occurred while moving file to users folder ";
+        //             }
+        //         })
+        //     } catch (error) {
+        //         res.end("error occurred while storing file please try again");
+        //         console.log("error while files was uploading");
+        //     }
+        //     await fileHandle.fileEntry(user, filedir, fileSizeInMB, filename)
+        //     await insertIntoAction.insertIntoAction(user, new Date().toISOString(), 'upload', filename)
+
+        //     res.redirect(`/file/filemanager/?username=${user}`)
+    })
+    .get('/myfiles', async (req, res) => {
 
         if (!req.cookies.user) {
             res.status(403)
