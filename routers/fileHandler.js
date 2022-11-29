@@ -83,7 +83,7 @@ router
 
         let user = req.cookies.user;
 
-        let url = await generateS3URL(`${req.cookies.user}/${req.cookies.userID}/${filename}`)
+        let url = await generateS3URL(`${req.cookies.user}-${req.cookies.userID}-${filename}`)
         console.log(url)
         res.send(url)
 
