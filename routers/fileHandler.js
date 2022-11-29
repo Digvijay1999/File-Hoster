@@ -84,12 +84,11 @@ router
         }
 
         fileKey = `${req.cookies.user}/${req.cookies.userID}/${filename}`
-        let url = await generateS3URL()
 
         //create route to make sure that file was uploaded from user and thrn call this function    
         await storeFilesNames(req.cookies.userID, req.cookies.user, fileKey, fileSizeInMB, filename)
 
-        let url = await generateS3URL(`${req.cookies.user}/${req.cookies.userID}/${filename}`)
+        let url = await generateS3URL(`${req.cookies.user}-${req.cookies.userID}-${filename}`)
         console.log(url)
         res.send(url)
 
