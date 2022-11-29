@@ -17,6 +17,8 @@ const { getRole } = require('../controllers/getRole');
 const verifyToken = require('../controllers/Auth/jwtVerifyToken')
 const cookieparser = require('cookie-parser')
 const { generateS3URL } = require('../controllers/fileHandlers/s3urlGenerator')
+const { storeFilesNames } = require("../controllers/fileHandlers/storeFilesNames")
+const { getUsersFiles } = require("../controllers/fileHandlers/getFilesNames")
 
 app.use(express.static('public'))
 app.use(cookieparser());
@@ -81,9 +83,12 @@ router
             return
         }
 
-        let user = req.cookies.user;
+        fileKey = `${req.cookies.user}/${req.cookies.userID}/${filename}`
+        let url = await generateS3URL()
 
-        let url = await generateS3URL(`${req.cookies.user}/${req.cookies.userID}/${filename}`)
+        //create route to make sure that file was uploaded from user and thrn call this function    
+        await storeFilesNames(req.cookies.userID, req.cookies.user, fileKey, fileSizeInMB, filename)
+
         console.log(url)
         res.send(url)
 
@@ -121,7 +126,13 @@ router
         }
 
         let filesArray = []
+
+        //bring file names from DB
+        let fileNames = await getUsersFiles(req.cookies.user, req.cookies.userID)
         const directoryPath = path.join(__dirname, `../public/user-files/${req.cookies.user}`);
+
+        //bring file links from s3 using file name array
+
         fs.readdir(directoryPath, async function (err, files) {
             //handling error
             if (err) {
