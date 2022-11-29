@@ -13,27 +13,23 @@
 <body>
     <h2>Upload Files</h2>
     <div class="mainDiv">
+
         <div id="formDiv">
             <form id="form">
                 <img id="img" src="/images/uploadImage.png" alt="upload files">
-                <input type="file" id="file" required name="file" />
+                <input type="file" id="file" required name="file" hidden />
             </form>
         </div>
 
-        <div class="content">
-            <span>filename.jpg</span>
-            <span>uploading 50%</span>
-            <div class="progressbar"></div>
+        <div id="content" hidden>
+            <span id="filenamespan">filename</span>
+            <span id="uploadingprocess">upload percentage</span>
+            <div id="progressbar"></div>
         </div>
 
-        <div class="content">
-            <div>
-                <span style="display: inline;">filename.jpg</span> <span style="display: inline; margin-left: 10px;">
-                    <b>Done</b>
-                </span>
-            </div>
+        <div id="append">
+
         </div>
-    </div>
     </div>
 </body>
 

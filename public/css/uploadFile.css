@@ -8,8 +8,8 @@
 
 }
 
-.progressbar {
-    width: 50%;
+#progressbar {
+    width: 0%;
     height: 6px;
     margin-top: 20px;
     background-color: crimson;

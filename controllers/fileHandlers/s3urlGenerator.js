@@ -11,7 +11,7 @@ const s3 = new aws.S3({
 async function generateS3URL(filename) {
     const params = ({
         Bucket: "storagebucketforfilehosterapp",
-        Key: filename,
+        Key: `${filename}`,
         Expires: 30
     })
     const uploadURL = await s3.getSignedUrlPromise('putObject', params)
