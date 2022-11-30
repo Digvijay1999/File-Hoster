@@ -19,6 +19,7 @@ const cookieparser = require('cookie-parser')
 const { generateS3URL } = require('../controllers/fileHandlers/s3urlGenerator')
 const { storeFilesNames } = require("../controllers/fileHandlers/storeFilesNames")
 const { getUsersFiles } = require("../controllers/fileHandlers/getFilesNames")
+const { getFilesLinkS3 } = require("../controllers/fileHandlers/s3URLgeneratorToDownloadFiles")
 
 app.use(express.static('public'))
 app.use(cookieparser());
@@ -125,30 +126,40 @@ router
             return
         }
 
-        let filesArray = []
-
         //bring file names from DB
-        let fileNames = await getUsersFiles(req.cookies.user, req.cookies.userID)
-        const directoryPath = path.join(__dirname, `../public/user-files/${req.cookies.user}`);
-
         //bring file links from s3 using file name array
 
-        fs.readdir(directoryPath, async function (err, files) {
-            //handling error
-            if (err) {
-                return console.log('Unable to scan directory: ' + err);
-            }
-            //listing all files using forEach
-            files.forEach(function (file) {
-                // Do whatever you want to do with the file
-                filesArray.push(file)
-            });
+        // fs.readdir(directoryPath, async function (err, files) {
+        //     //handling error
+        //     if (err) {
+        //         return console.log('Unable to scan directory: ' + err);
+        //     }
+        //     //listing all files using forEach
+        //     files.forEach(function (file) {
+        //         // Do whatever you want to do with the file
+        //         filesArray.push(file)
+        //     });
 
-            // show files of user
-            let user = req.cookies.user
-            let storageSpace = await usedAndAllowedSpace.getData(req.cookies.userID);
-            res.render('myfiles', { files: filesArray, storageSpace: storageSpace, user: user, layout: './layouts/MainUserInterface' })
-        })
+        //     // show files of user
+        //     let user = req.cookies.user
+
+        const numOfResults = result.length;
+        const resultPerPage = 10;
+        const numberOfPages = Math.ceil(numOfResults / resultsPerPage);
+        let page = req.query.page ? Number(req.query.page) : 1;
+        if (page > numberOfPages) {
+            res.redirect('/?page=' + encodeURIComponent(numberOfPages));
+        } else if (page < 1) {
+            res.redirect('/?page=' + encodeURIComponent('1'));
+        }
+
+        const startingLimit = (page - 1) * resultsPerPage;
+
+        let arrayOfFiles = await getFilesLinkS3(req.cookies.userID, startingLimit, resultPerPage)
+
+        let storageSpace = await usedAndAllowedSpace.getData(req.cookies.userID);
+        res.render('myfiles', { files: arrayOfFiles, storageSpace: storageSpace, user: req.cookies.user, layout: './layouts/MainUserInterface' })
+        //})
 
     }).get('/myactions', async (req, res) => {
         if (!req.cookies.user) {
