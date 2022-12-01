@@ -37,6 +37,7 @@ router
         console.log("calling store file names ");
         //why req.cookies.filename and req.cookies.size was not working in below function 
         storeFilesNames(req.cookies.userID, req.cookies.user, `${req.cookies.user}-${req.cookies.userID}-${filename}`, parseInt(size) / 1000000, filename)
+        res.end()
     })
 
 router.post('/loginCheck', async (req, res) => {
