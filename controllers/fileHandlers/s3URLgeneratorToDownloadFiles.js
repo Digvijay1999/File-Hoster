@@ -17,10 +17,10 @@ const s3 = new aws.S3({
  * @return {[Array of Objects]}  get array of objects, where object has downlodable link of file,filename,filesize
  */
 async function getFilesLinkS3(userid, startingLimit, resultPerPage) {
-    let qry = `SELECT directory,filename,filesize FROM user_files WHERE user_id = ${userid} LIMIT ${startingLimit}, ${resultPerPage}`
+    let qry = `SELECT directory,filename,filesize FROM user_files WHERE user_id = ${userid} OFFSET ${resultPerPage} LIMIT ${startingLimit};`
     let res = await DB.executeQuery(qry);
 
-    res.rows.forEach(async (doc) => {
+    res.forEach(async (doc) => {
         const uploadURL = await s3.getSignedUrlPromise('getObject', {
             Bucket: "storagebucketforfilehosterapp",
             Key: `${doc.directory}`,
@@ -28,7 +28,8 @@ async function getFilesLinkS3(userid, startingLimit, resultPerPage) {
         })
         doc.directory = uploadURL
     });
-    return res.rows;
+    console.log(res);
+    return res;
 }
 
-module.exports = getFilesLinkS3;
+module.exports = { getFilesLinkS3 };
