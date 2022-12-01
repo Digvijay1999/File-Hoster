@@ -10,11 +10,14 @@
 
 <body>
     <% files.forEach(entry=> { %>
-        <h1>
+        <h3>
             <%= entry.filename %>
-        </h1>
+        </h3>
         <p>
-            <%= entry.size %>
+            <%= entry.filesize %>
+        </p>
+        <p>
+            <%= entry.directory %>
         </p>
         <% }) %>
 
@@ -22,20 +25,21 @@
             <div class="break"></div>
 
             <!--Display the links to the pages-->
-            <% if(page> 1) { %> <a href="/?page=<%=page-1%>">Before</a>
+            <% if(page> 1) { %> <a href="http://localhost:8000/file/myfiles/?page=<%=page-1%>">Before</a>
                 <% } %>
                     <% for(let i=iterator; i <=endingLink; i++) { %>
                         <% if(i===page) { %>
-                            <a class="selectedLink" href="/?page=<%=i%>">
+                            <a class="selectedLink" href="http://localhost:8000/file/myfiles/?page=<%=i%>">
                                 <%=i%>
                             </a>
                             <% continue; %>
                                 <% } %>
-                                    <a href="/?page=<%=i%>">
+                                    <a href="http://localhost:8000/file/myfiles/?page=<%=i%>">
                                         <%=i%>
                                     </a>
                                     <% } %>
-                                        <% if(page < numberOfPages) { %> <a href="/?page=<%=page+1%>">After</a>
+                                        <% if(page < numberOfPages) { %> <a
+                                                href="http://localhost:8000/file/myfiles/?page=<%=page+1%>">After</a>
                                             <% } %>
 </body>
 
