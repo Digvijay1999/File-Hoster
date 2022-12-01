@@ -125,48 +125,46 @@ router
             return
         }
 
-        //bring file names from DB
-        //bring file links from s3 using file name array
-
-        // fs.readdir(directoryPath, async function (err, files) {
-        //     //handling error
-        //     if (err) {
-        //         return console.log('Unable to scan directory: ' + err);
-        //     }
-        //     //listing all files using forEach
-        //     files.forEach(function (file) {
-        //         // Do whatever you want to do with the file
-        //         filesArray.push(file)
-        //     });
-
-        //     // show files of user
-        //     let user = req.cookies.user
-
-        let numOfResults = getFileCount(req.cookies.userID)
+        let numOfResults = await getFileCount(req.cookies.userID)
+        console.log("total files " + numOfResults);
         const resultPerPage = 10;
         const numberOfPages = Math.ceil(numOfResults / resultPerPage);
         let page = req.query.page ? Number(req.query.page) : 1;
+
         if (page > numberOfPages) {
             res.redirect('/?page=' + encodeURIComponent(numberOfPages));
         } else if (page < 1) {
             res.redirect('/?page=' + encodeURIComponent('1'));
         }
 
-        const startingLimit = (page - 1) * resultPerPage;
+        let arrayOfFiles;
+        let iterator
+        let endingLink
 
-        let iterator = (page - 5) < 1 ? 1 : page - 5;
-        let endingLink = (iterator + 9) <= numberOfPages ? (iterator + 9) : page + (numberOfPages - page);
-        if (endingLink < (page + 4)) {
-            iterator -= (page + 4) - numberOfPages;
+        //3 -2 -1 0 1 2
+
+        if (numOfResults <= resultPerPage) {
+            arrayOfFiles = await getFilesLinkS3(req.cookies.userID, 0, 11)
+            iterator = 1;
+            endingLink = 1;
+
+        } else {
+            const startingLimit = (page - 1) * resultPerPage;
+
+            iterator = (page - 5) < 1 ? 1 : page - 5;
+            endingLink = (iterator + 9) <= numberOfPages ? (iterator + 9) : numberOfPages;
+            // if (endingLink < (page + 4)) {
+            //     iterator -= (page + 4) - numberOfPages;
+            // }
+            arrayOfFiles = await getFilesLinkS3(req.cookies.userID, startingLimit, resultPerPage)
         }
-
-        let arrayOfFiles = await getFilesLinkS3(req.cookies.userID, startingLimit, resultPerPage)
 
         console.log(arrayOfFiles);
 
         let storageSpace = await usedAndAllowedSpace.getData(req.cookies.userID);
 
         //res.render('myfiles', { data: result, page, iterator, endingLink, numberOfPages });
+        console.log(page, iterator, endingLink, numberOfPages);
         res.render('myfiles', { files: arrayOfFiles, page, iterator, endingLink, numberOfPages, storageSpace: storageSpace, user: req.cookies.user, layout: './layouts/MainUserInterface' })
         //})
 
