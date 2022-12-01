@@ -4,6 +4,10 @@ const router = express.Router();
 const CheckUserInDB = require('../controllers/userAndEmailChecker')
 const loginCreds = require('../controllers/loginCredChecker')
 app.use(express.urlencoded({ extended: false }));
+const { storeFilesNames } = require("../controllers/fileHandlers/storeFilesNames")
+const verifyToken = require('../controllers/Auth/jwtVerifyToken')
+
+
 
 const cors = require('cors');
 const corsOptions = {
@@ -20,6 +24,20 @@ router.post('/userCheck', async (req, res) => {
     console.log("user checked successfully");
     res.end
 })
+
+router
+    .use((req, res, next) => {
+        verifyToken(req, res, next)
+    })
+    .post('/fileuploaded', (req, res) => {
+        console.log("printing body");
+        let filename = req.body.filename
+        let size = req.body.size;
+        console.log(filename, size);
+        console.log("calling store file names ");
+        //why req.cookies.filename and req.cookies.size was not working in below function 
+        storeFilesNames(req.cookies.userID, req.cookies.user, `${req.cookies.user}-${req.cookies.userID}-${filename}`, parseInt(size) / 1000000, filename)
+    })
 
 router.post('/loginCheck', async (req, res) => {
     console.log("api call for login page for " + req.body.username);
