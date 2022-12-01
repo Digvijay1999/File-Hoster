@@ -9,45 +9,15 @@
 </head>
 
 <body>
-
-
-    <table>
-        <% for(var i=0; i < files.length; i++) { %>
-            <tr>
-                <div style="border-style: solid; border-color: black; border-width: thin; padding: 15px;">
-                    <form action="/file/filedownload" method="POST" style="margin: 10px;">
-                        <div>
-                            <h2>
-                                <%= files[i] %>
-                            </h2>
-                        </div>
-                        <div style="margin: 5px;">
-                            <input type="text" name="file" value="<%= files[i] %>" hidden>
-                            <input type="submit" name="action" value="delete" style="margin: 5px;">
-                            <input type="submit" name="action" value="download">
-                        </div>
-                    </form>
-                </div>
-
-            </tr>
-            <% } %>
-    </table>
-
-</body>
-
-</html>
-
-<!--files = [{key,name,size},{key,name,size},{key,name,size}]-->
-
-<body>
-    <% files.forEach( obj=> { %>
+    <% files.forEach(entry=> { %>
         <h1>
-            <%= obj.filename %>
+            <%= entry.filename %>
         </h1>
         <p>
-            <%= obj.size %>
+            <%= entry.size %>
         </p>
         <% }) %>
+
 
             <div class="break"></div>
 
@@ -68,3 +38,7 @@
                                         <% if(page < numberOfPages) { %> <a href="/?page=<%=page+1%>">After</a>
                                             <% } %>
 </body>
+
+</html>
+
+<!--files = [{key,name,size},{key,name,size},{key,name,size}]-->
