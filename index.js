@@ -11,7 +11,7 @@ const DB = require('./db-config');
 const path = require('path');
 
 const cors = require('cors');
-app.use(cors({ origin: ["http://localhost:8000/","http://127.0.0.1:8000/"], methods: "POST" }))
+app.use(cors({ origin: ["http://localhost:8000/", "http://127.0.0.1:8000/"], methods: "POST" }))
 
 app.use(cookieparser());
 app.use(express.urlencoded({ extended: false }));
@@ -58,7 +58,7 @@ app.use('/api', api, (req, res) => {
 app.get('/logout', (req, res) => {
     console.log(req.cookies.user + " logged out");
     res.clearCookie('userID');
-    res.clearCookie('connect.sid')
+    res.clearCookie('token')
     res.clearCookie('user').redirect('/homepage')
 })
 
