@@ -8,7 +8,7 @@ const path = require('path');
 const fileHandle = require('../controllers/UserFileEntryToDB')
 const getAction = require('../controllers/getActionsOfUser')
 const userid = require('../controllers/getuserid')
-const insertIntoAction = require('../controllers/insertActionsToDB');
+const { insertIntoAction } = require('../controllers/insertActionsToDB');
 const insertActionsToDB = require('../controllers/insertActionsToDB');
 const currentallowedspace = require('../controllers/Admin/getCurrentAllowedSpace');
 const totalspaceusedbyuser = require('../controllers/Admin/gettotalspaceusedbyuser')
@@ -88,34 +88,17 @@ router
 
         //create route to make sure that file was uploaded from user and thrn call this function    
 
-        let url = await generateS3URL(fileKey)
+        let url
+
+        try {
+            url = await generateS3URL(fileKey)
+            insertIntoAction(req.cookies.user, new Date().toISOString(), "UPLOAD", filename);
+        } catch {
+            res.end()
+            return;
+        }
         console.log(url)
         res.send(url)
-
-        //main file upload logic
-        //current directory for fileHandler is C:\Users\diguy\Desktop\git\file-handler\routers
-        //     const dir = path.join(__dirname, `../public/user-files/${user}`);
-
-        //     if (!fs.existsSync(dir)) {
-        //         await fs.mkdirSync(dir, { recursive: true });
-        //     }
-
-        //     const filedir = path.join(__dirname, `../`, `public/user-files/${user}`, `${filename}`);
-
-        //     try {
-        //         await file.mv(filedir, (error) => {
-        //             if (error) {
-        //                 throw "error occurred while moving file to users folder ";
-        //             }
-        //         })
-        //     } catch (error) {
-        //         res.end("error occurred while storing file please try again");
-        //         console.log("error while files was uploading");
-        //     }
-        //     await fileHandle.fileEntry(user, filedir, fileSizeInMB, filename)
-        //     await insertIntoAction.insertIntoAction(user, new Date().toISOString(), 'upload', filename)
-
-        //     res.redirect(`/file/filemanager/?username=${user}`)
     })
     .get('/myfiles', async (req, res) => {
 
@@ -125,14 +108,18 @@ router
             return
         }
 
+
+
         let numOfResults = await getFileCount(req.cookies.userID)
         console.log("total files " + numOfResults);
         const resultPerPage = 10;
-        const numberOfPages = Math.ceil(numOfResults / resultPerPage);
+        const numberOfPages = Math.ceil(numOfResults / resultPerPage) == 0 ? 1 : Math.ceil(numOfResults / resultPerPage);
         let page = req.query.page ? Number(req.query.page) : 1;
 
         if (page > numberOfPages) {
             res.redirect('/?page=' + encodeURIComponent(numberOfPages));
+            res.end()
+            return;
         } else if (page < 1) {
             res.redirect('/?page=' + encodeURIComponent('1'));
         }
@@ -181,36 +168,8 @@ router
         let storageSpace = await usedAndAllowedSpace.getData(req.cookies.userID);
         res.render('myActions', { user: user, storageSpace: storageSpace, files: UserActions, layout: './layouts/MainUserInterface' })
 
-    }).post('/filedownload', async (req, res) => {
-
-        if (!req.cookies.user) {
-            res.status(403)
-            res.end()
-            return
-        }
-        const filepath = path.join(__dirname, `../public/user-files/${req.cookies.user}/${req.body.file}`);
-
-        if (req.body.action == 'download') {
-            res.download(filepath);
-            insertActionsToDB.insertIntoAction(req.cookies.user, new Date().toISOString(), 'download', req.body.file)
-
-        } else if (req.body.action == 'delete') {
-            // let deleteFilePath =  `./public/user-files/${req.cookies.user}/${req.body.file}`;
-
-            let deleteFilePath = path.join(__dirname, `../public/user-files/${req.cookies.user}/${req.body.file}`);
-
-            try {
-                console.log("deleting the file");
-                await fileHandle.filedelete(req.cookies.user, deleteFilePath)
-                fs.unlinkSync(filepath);
-            } catch (error) {
-                console.log("file was not present in directory while deleting the file");
-            }
-
-            //insert delete action to action table
-            insertActionsToDB.insertIntoAction(req.cookies.user, new Date().toISOString(), 'delete', req.body.file)
-            res.redirect('/file/myfiles')
-        }
+    }).post('/delete', async (req, res) => {
+        console.log("delete file route called");
     })
     .get('/filemanager', async (req, res) => {
 
