@@ -138,7 +138,7 @@
                 }
             }
         }
-        xrh.open('POST', `http://localhost:8000/api/userCheck`, true);
+        xrh.open('POST', `http://ALB-1-2025074245.ap-south-1.elb.amazonaws.com/api/userCheck`, true);
         //xrh.open('POST', `https://filehosternode.herokuapp.com/api/userCheck`, true)
         xrh.setRequestHeader('Content-type', 'application/x-www-form-urlencoded');
         xrh.send(`username=${username}&email=${email}`);

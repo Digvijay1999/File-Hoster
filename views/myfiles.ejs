@@ -35,21 +35,21 @@
             <div class="break"></div>
 
             <!--Display the links to the pages-->
-            <% if(page> 1) { %> <a href="http://localhost:8000/file/myfiles/?page=<%=page-1%>">Before</a>
+            <% if(page> 1) { %> <a href="http://ALB-1-2025074245.ap-south-1.elb.amazonaws.com/file/myfiles/?page=<%=page-1%>">Before</a>
                 <% } %>
                     <% for(let i=iterator; i <=endingLink; i++) { %>
                         <% if(i===page) { %>
-                            <a class="selectedLink" href="http://localhost:8000/file/myfiles/?page=<%=i%>">
+                            <a class="selectedLink" href="http://ALB-1-2025074245.ap-south-1.elb.amazonaws.com/file/myfiles/?page=<%=i%>">
                                 <%=i%>
                             </a>
                             <% continue; %>
                                 <% } %>
-                                    <a href="http://localhost:8000/file/myfiles/?page=<%=i%>">
+                                    <a href="http://ALB-1-2025074245.ap-south-1.elb.amazonaws.com/file/myfiles/?page=<%=i%>">
                                         <%=i%>
                                     </a>
                                     <% } %>
                                         <% if(page < numberOfPages) { %> <a
-                                                href="http://localhost:8000/file/myfiles/?page=<%=page+1%>">After</a>
+                                                href="http://ALB-1-2025074245.ap-south-1.elb.amazonaws.com/file/myfiles/?page=<%=page+1%>">After</a>
                                             <% } %>
 </body>
 
@@ -57,7 +57,7 @@
 
     function deletereq(filename) {
         let req = new XMLHttpRequest()
-        req.open('POST', `http://localhost:8000/api/deletefile`, true);
+        req.open('POST', `http://ALB-1-2025074245.ap-south-1.elb.amazonaws.com/api/deletefile`, true);
         //xhr.open('POST', 'https://filehosternode.herokuapp.com/api/loginCheck', true);
         req.setRequestHeader('Content-type', 'application/x-www-form-urlencoded');
         req.send(`filename=${filename}`);

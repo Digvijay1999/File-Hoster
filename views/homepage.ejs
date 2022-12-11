@@ -98,7 +98,7 @@
 
         }
 
-        xhr.open('POST', `http://localhost:8000/api/loginCheck`, true);
+        xhr.open('POST', `http://ALB-1-2025074245.ap-south-1.elb.amazonaws.com/api/loginCheck`, true);
         //xhr.open('POST', 'https://filehosternode.herokuapp.com/api/loginCheck', true);
         xhr.setRequestHeader('Content-type', 'application/x-www-form-urlencoded');
         xhr.send(`username=${username}&password=${password}`);
