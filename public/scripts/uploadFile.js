@@ -15,7 +15,7 @@ file.onchange = async (e) => {
     document.getElementById("filenamespan").textContent = filename
 
     var xrh = new XMLHttpRequest()
-    xrh.open("POST", "http://localhost:8000/file/upload")
+    xrh.open("POST", "http://ALB-1-2025074245.ap-south-1.elb.amazonaws.com/file/upload")
     xrh.setRequestHeader("Content-Type", "application/x-www-form-urlencoded")
     xrh.send(`filename=${filename}&size=${size}&type=${type}`)
     xrh.onload = () => {
@@ -34,7 +34,7 @@ function updatePercentage(percentage, filename, size) {
         document.getElementById('append').innerHTML = node
 
         var xrh = new XMLHttpRequest()
-        xrh.open("POST", "http://localhost:8000/api/fileuploaded")
+        xrh.open("POST", "http://ALB-1-2025074245.ap-south-1.elb.amazonaws.com/api/fileuploaded")
         xrh.setRequestHeader("Content-Type", "application/x-www-form-urlencoded")
         xrh.send(`filename=${filename}&size=${size}`)
 

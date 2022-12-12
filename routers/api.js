@@ -6,7 +6,7 @@ const loginCreds = require('../controllers/loginCredChecker')
 app.use(express.urlencoded({ extended: false }));
 const { storeFilesNames } = require("../controllers/fileHandlers/storeFilesNames")
 const verifyToken = require('../controllers/Auth/jwtVerifyToken')
-const { deletefile } = require("../controllers/fileHandlers/s3urlToDeleteFile")
+const { deletefile } = require("../controllers/fileHandlers/s3FuncToDeleteFile")
 
 
 

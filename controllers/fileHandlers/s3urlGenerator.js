@@ -15,6 +15,8 @@ async function generateS3URL(filename) {
         Expires: 30,
     })
     const uploadURL = await s3.getSignedUrlPromise('putObject', params)
+    console.log("link generated for file upload");
+    console.log(uploadURL);
     return uploadURL
 }
 

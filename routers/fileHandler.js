@@ -97,7 +97,6 @@ router
             res.end()
             return;
         }
-        console.log(url)
         res.send(url)
     })
     .get('/myfiles', async (req, res) => {
