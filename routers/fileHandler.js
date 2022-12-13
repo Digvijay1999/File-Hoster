@@ -91,6 +91,7 @@ router
         let url
 
         try {
+            console.log("calling generateS3URL");
             url = await generateS3URL(fileKey)
             insertIntoAction(req.cookies.user, new Date().toISOString(), "UPLOAD", filename);
         } catch {
